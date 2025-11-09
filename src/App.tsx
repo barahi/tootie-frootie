@@ -1,4 +1,4 @@
-import MainScreen from "./components/screens/MainScreen";
+import MainScreen from "./components/pages/MainScreen";
 import "./App.css";
 
 function App() {
