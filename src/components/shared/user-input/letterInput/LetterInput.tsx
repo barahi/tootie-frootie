@@ -42,6 +42,7 @@ export const LetterInput = ({
   return (
     <div className="flex flex-col mb-4">
       <label
+        htmlFor="letter-input"
         className={`font-thin tracking-wider
                     ${disabled ? "opacity-50 pointer-events-none" : ""}
                   `}
@@ -63,6 +64,7 @@ export const LetterInput = ({
         ))}
 
         <input
+          id="letter-input"
           value={inputLetter}
           onChange={handleChange}
           onKeyDown={handleKeyDown}
