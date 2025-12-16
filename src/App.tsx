@@ -1,11 +1,12 @@
-import MainScreen from "./components/pages/MainScreen";
+import { GameSetupProvider } from "./context/GameFlowContext";
+import Routing from "../src/context/Routing";
 import "./App.css";
 
 function App() {
   return (
-    <div className="App">
-      <MainScreen />
-    </div>
+    <GameSetupProvider>
+      <Routing />
+    </GameSetupProvider>
   );
 }
 
