@@ -29,7 +29,7 @@ export const PasswordInput = ({
   return (
     <div className="flex flex-col mb-4">
       <label
-        htmlFor="password "
+        htmlFor="password"
         className={`font-thin tracking-wider
                     ${disabled ? "opacity-50 pointer-events-none" : ""}
                   `}

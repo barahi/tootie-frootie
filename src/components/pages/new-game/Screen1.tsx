@@ -84,7 +84,7 @@ function Screen1({ nextPage }: { nextPage: () => void }) {
       </div>
       <div className="absolute inset-0 flex justify-center items-center">
         <div className="flex flex-col w-2/3 justify-center items-center bg-white border-none rounded-3xl p-10">
-          <h1 className="text-xl mb-6 font-medium tracking-widest">
+          <h1 className="text-xl mt-2 mb-6 font-medium tracking-widest">
             Create a new lobby
           </h1>
           <form id="new-game-form" className="flex flex-row w-full gap-10">
@@ -139,7 +139,7 @@ function Screen1({ nextPage }: { nextPage: () => void }) {
               />
             </div>
           </form>
-          <div className="flex flex-row justify-between gap-20">
+          <div className="flex flex-row w-full justify-around">
             <BlackButton
               buttonTitle="Back"
               nextFunction={() => navigate("/")}

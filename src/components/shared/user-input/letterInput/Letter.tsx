@@ -1,3 +1,5 @@
+import { CircleX } from "lucide-react";
+
 type LetterProps = {
   letter: string;
   onRemove: () => void;
@@ -18,8 +20,8 @@ export const Letter = ({ letter, onRemove }: LetterProps) => {
         <button
           onClick={onRemove}
           className="
-          absolute -top-1 -right-1
-          h-2 w-2
+          absolute -top-1 -right-2
+          h-4 w-4
           flex items-center justify-center
           text-xs font-medium
           text-gray-99
@@ -28,7 +30,7 @@ export const Letter = ({ letter, onRemove }: LetterProps) => {
           hover:text-black
         "
         >
-          x
+          <CircleX />
         </button>
       </span>
     </div>
