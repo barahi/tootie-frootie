@@ -5,12 +5,14 @@ type PasswordInputProps = {
   password: string;
   disabled?: boolean;
   onChange: (password: string) => void;
+  className?: string;
 };
 
 export const PasswordInput = ({
   password,
   disabled = false,
   onChange,
+  className = "",
 }: PasswordInputProps) => {
   const [, setPasswordInput] = useState<string>("");
   const [isVisible, setIsVisible] = useState<boolean>(false);
@@ -43,18 +45,11 @@ export const PasswordInput = ({
           disabled={disabled}
           value={password}
           onChange={addPassword}
-          className="
-            w-full
-            border rounded-xl border-gray-99
-            p-1
-            text-black text-sm font-thin
-            transition-all duration-300
-            focus:outline-none focus:ring-gray-99
-            disabled:border-gray-90
-            disabled:bg-gray-50
-            disabled:text-gray-50
-            disabled:cursor-not-allowed
-          "
+          className={`
+            w-full pt-0.5 pb-0.5 pl-1 pr-1
+            focus:outline-none focus:ring-1 focus:ring-gray-10
+            ${className}
+          `}
         />
         <button
           type="button"

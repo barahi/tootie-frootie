@@ -4,9 +4,9 @@ module.exports = {
   theme: {
     colors: {
       blue: {
-        90: "#496DDB",
-        50: "#99ADEB",
-        10: "#DDE4F8",
+        90: "#5f89ccff",
+        50: "#a9c3eaff",
+        10: "#b2c4d9ff",
       },
       red: {
         90: "#ED254E",

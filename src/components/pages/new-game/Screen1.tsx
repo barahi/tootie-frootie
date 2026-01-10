@@ -41,6 +41,8 @@ function Screen1({ nextPage }: { nextPage: () => void }) {
   const [password, setPassword] = useState<string>(gameConfig?.password || "");
   const [letters, setLetters] = useState<string[]>(gameConfig?.letters || []);
 
+  const [errorMessage, setErrorMessage] = useState<string>("");
+
   useEffect(() => {
     if (!letterExclusion) {
       setLetters([]);
@@ -54,15 +56,25 @@ function Screen1({ nextPage }: { nextPage: () => void }) {
   }, [passwordRequirement]);
 
   const handleNext = () => {
+    if (
+      passwordRequirement &&
+      !password &&
+      letterExclusion &&
+      letters.length === 0
+    ) {
+      setErrorMessage(
+        "Please enter a password and letters to exclude from game"
+      );
+      return;
+    }
     if (passwordRequirement && !password) {
-      alert("Please enter a password.");
+      setErrorMessage("Please enter a password.");
       return;
     }
     if (letterExclusion && letters.length === 0) {
-      alert("Please enter letters to exclude from game.");
+      setErrorMessage("Please enter letters to exclude from game");
       return;
     }
-
     setGameConfig({
       ...gameConfig,
       playerCount: playerCount,
@@ -88,7 +100,7 @@ function Screen1({ nextPage }: { nextPage: () => void }) {
             Create a new lobby
           </h1>
           <form id="new-game-form" className="flex flex-row w-full gap-10">
-            <div className="flex flex-col w-full gap-8 mt-6 mb-8">
+            <div className="flex flex-col w-full gap-8 mt-6 mb-2">
               <DropdownSelect
                 selectItems={playerRoundNumbers}
                 title="Number of players"
@@ -136,9 +148,20 @@ function Screen1({ nextPage }: { nextPage: () => void }) {
                 password={password}
                 disabled={!passwordRequirement}
                 onChange={setPassword}
+                className="w-8 border-1 rounded-lg border-gray-99 text-black text-sm font-thin transition-all duration-300
+                    focus:outline-none focus:ring-gray-50
+                    disabled:border-gray-90
+                    disabled:bg-gray-50
+                    disabled:text-gray-50
+                    disabled:cursor-not-allowed"
               />
             </div>
           </form>
+          {errorMessage && (
+            <p className="bg-red-10 px-2 py-1 text-xs font-thin tracking-wider text-red-90 mb-6 border-none rounded-lg">
+              {errorMessage}
+            </p>
+          )}
           <div className="flex flex-row w-full justify-around">
             <BlackButton
               buttonTitle="Back"
