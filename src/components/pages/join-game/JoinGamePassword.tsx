@@ -18,7 +18,7 @@ function JoinGamePassword() {
       setErrorMessage("Password cannot be empty");
       return;
     }
-    navigate("/game-lobby/");
+    navigate(`/game-lobby/${roomId}`);
   };
   return (
     <div className="relative w-full h-screen">

@@ -15,21 +15,18 @@ export default function Routing() {
     <Router>
       <Routes>
         <Route path="/" element={<MainScreen />} />
-
+        <Route path="/new-game" element={<CreateNewGame />} />
         <Route
           path="/join-game"
           element={<Navigate to="/join-game/room" replace />}
         />
         <Route path="/join-game/*" element={<JoinGame />} />
-
-        <Route path="/new-game" element={<CreateNewGame />} />
-
-        <Route path="/game-lobby" element={<GameLobby />} />
+        <Route path="/game-lobby/:roomId" element={<GameLobby />} />
         {/* TODO: link them to a context in GameRound*/}
-        <Route path="/submit" element={<SubmitPhase />} />
-        <Route path="/review" element={<ReviewPhase />} />
-        <Route path="/vote" element={<VotePhase />} />
-        <Route path="/score" element={<ScorePhase />} />
+        <Route path="/submit/:roomId" element={<SubmitPhase />} />
+        <Route path="/review/:roomId" element={<ReviewPhase />} />
+        <Route path="/vote/:roomId" element={<VotePhase />} />
+        <Route path="/score/:roomId" element={<ScorePhase />} />
       </Routes>
     </Router>
   );

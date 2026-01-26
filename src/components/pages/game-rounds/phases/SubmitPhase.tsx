@@ -26,6 +26,7 @@ function SubmitPhase() {
           <div className="flex flex-col w-full gap-2">
             {players.map((p) => (
               <PlayerInfoTag
+                key={p.id}
                 number={p.id}
                 name={p.name}
                 className="border-none`"

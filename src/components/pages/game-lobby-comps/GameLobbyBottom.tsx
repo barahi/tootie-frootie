@@ -6,12 +6,14 @@ import BlackButton from "../../shared/buttons/BlackButton";
 type GameLobbyBottomProps = {
   password: string;
   numberOfPlayers: number;
+  roomCode: string;
   handleNext: () => void;
 };
 
 function GameLobbyBottom({
   password,
   numberOfPlayers,
+  roomCode,
   handleNext,
 }: GameLobbyBottomProps) {
   // TO DO: Get number of players in lobby from backend
@@ -39,7 +41,7 @@ function GameLobbyBottom({
           {/* title */}
           <div className="flex flex-row w-full gap-2 mb-1">
             <div className="flex flex-col w-full gap-4">
-              <CopyTag title="Room Code" copyableTag="ABCD1234" />
+              <CopyTag title="Room Code" copyableTag={roomCode} />
               {password && (
                 <CopyTag
                   title="Password"

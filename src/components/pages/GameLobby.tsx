@@ -1,11 +1,18 @@
 import Layout from "../shared/Layout";
 import { useGameSetup } from "../../context/GameFlowContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import GameLobbyTop from "./game-lobby-comps/GameLobbyTop";
 import GameLobbyBottom from "./game-lobby-comps/GameLobbyBottom";
 
 function GameLobby() {
   const { gameConfig } = useGameSetup();
+  const { roomId } = useParams<{ roomId: string }>();
+  const navigate = useNavigate();
+
+  if (!roomId) {
+    return <Navigate to="/join-game/room" replace />;
+  }
 
   const gameParameters = {
     categories: gameConfig.categories || [],
@@ -15,11 +22,11 @@ function GameLobby() {
     password: gameConfig.password || "",
   };
 
-  const navigate = useNavigate();
-
   const handleNext = () => {
-    navigate("/submit");
+    console.log("Room id is " + roomId);
+    navigate(`/submit/${roomId}`);
   };
+
   return (
     <Layout>
       <div className="absolute inset-0 flex items-center justify-center">
@@ -31,6 +38,7 @@ function GameLobby() {
           <GameLobbyBottom
             password={gameParameters.password}
             numberOfPlayers={gameParameters.numberOfPlayers}
+            roomCode={roomId!}
             handleNext={handleNext}
           />
         </div>
