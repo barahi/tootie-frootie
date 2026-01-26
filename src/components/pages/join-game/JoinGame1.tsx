@@ -4,6 +4,7 @@ import { useGameSetup } from "../../../context/GameFlowContext";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { LabelInput } from "../../shared/user-input/basic-label-input/LabelInput";
+import { ErrorMessage } from "../../shared/messages/ErrorMessage";
 
 type Screen1Props = {
   roomId: string;
@@ -47,12 +48,7 @@ function JoinGame1({ roomId, setRoomId, nextPage }: Screen1Props) {
               onChange={(val) => setRoomId(val)}
             />
           </div>
-
-          {errorMessage && (
-            <p className="px-2 py-1 mb-6 text-xs font-thin tracking-wider border-none rounded-lg bg-red-10 text-red-90">
-              {errorMessage}
-            </p>
-          )}
+          <ErrorMessage message={errorMessage} />
           <BlackButton buttonTitle="Join" nextFunction={handleNext} />
         </div>
       </div>

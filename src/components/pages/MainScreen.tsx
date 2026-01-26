@@ -1,4 +1,5 @@
 import Logo from "../shared/images/Logo";
+import { ErrorMessage } from "../shared/messages/ErrorMessage";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 
@@ -24,12 +25,12 @@ function MainScreen() {
   };
 
   return (
-    <div className="flex flex-col justify-center items-center w-full h-screen">
-      <h1 className="text-5xl mb-4">
+    <div className="flex flex-col items-center justify-center w-full h-screen">
+      <h1 className="mb-4 text-5xl">
         <Logo />
       </h1>
       <div className="flex flex-col gap-6">
-        <div className="flex flex-col justify-center items-center">
+        <div className="flex flex-col items-center justify-center">
           <label
             className="text-lg font-light tracking-wider"
             htmlFor="username"
@@ -46,24 +47,20 @@ function MainScreen() {
               e.preventDefault();
               saveUsername(e.target.value);
             }}
-            className="text-sm text-center w-60 h-8 bg-white border-solid border-gray border-1 rounded-lg font-thin p-2 focus:outline-none placeholder:italic placeholder:text-black placeholder:text-sm"
+            className="h-8 p-2 text-sm font-thin text-center bg-white border-solid rounded-lg w-60 border-gray border-1 focus:outline-none placeholder:italic placeholder:text-black placeholder:text-sm"
           ></input>
-          {errorMessage && (
-            <p className="bg-red-10 px-2 py-1 text-xs font-thin tracking-wider text-red-90 mt-2 border-none rounded-lg">
-              {errorMessage}
-            </p>
-          )}
+          <ErrorMessage message={errorMessage} />
         </div>
-        <div className="flex flex-col gap-2 justify-center items-center">
+        <div className="flex flex-col items-center justify-center gap-2">
           <button
             onClick={() => handleNext("new-game")}
-            className="text-base tracking-wider font-thin w-60 h-8 border-solid border-black border-1 rounded-lg hover:border-2"
+            className="h-8 text-base font-thin tracking-wider border-black border-solid rounded-lg w-60 border-1 hover:border-2"
           >
             Start a new game
           </button>
           <button
             onClick={() => handleNext("join-game")}
-            className="text-base tracking-wider font-thin w-60 h-8 border-solid border-black border-1 rounded-lg hover:border-2"
+            className="h-8 text-base font-thin tracking-wider border-black border-solid rounded-lg w-60 border-1 hover:border-2"
           >
             Join an existing game
           </button>

@@ -5,6 +5,7 @@ import { LabelInput } from "../shared/user-input/basic-label-input/LabelInput";
 import BlackButton from "../shared/buttons/BlackButton";
 import { LetterInput } from "../shared/user-input/letterInput/LetterInput";
 import { PasswordInput } from "../shared/user-input/passwordInput/PasswordInput";
+import { ErrorMessage } from "../shared/messages/ErrorMessage";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useGameSetup } from "../../context/GameFlowContext";
@@ -176,11 +177,7 @@ function CreateNewGame() {
               />
             </div>
           </form>
-          {errorMessage && (
-            <p className="px-2 py-1 mb-6 text-xs font-thin tracking-wider border-none rounded-lg bg-red-10 text-red-90">
-              {errorMessage}
-            </p>
-          )}
+          <ErrorMessage message={errorMessage} />
           <div className="flex flex-row justify-around w-full">
             <BlackButton
               buttonTitle="Back"

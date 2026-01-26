@@ -3,6 +3,7 @@ import { useState } from "react";
 import Header from "../../shared/bars/Header";
 import BlackButton from "../../shared/buttons/BlackButton";
 import { PasswordInput } from "../../shared/user-input/passwordInput/PasswordInput";
+import { ErrorMessage } from "../../shared/messages/ErrorMessage";
 
 type Props = {
   roomId: string;
@@ -48,11 +49,7 @@ function JoinGame2({ roomId, prevPage }: Props) {
               className=" focus:ring-gray-50"
             />
           </div>
-          {errorMessage && (
-            <p className="px-2 py-1 mb-6 text-xs font-thin tracking-wider border-none rounded-lg bg-red-10 text-red-90">
-              {errorMessage}
-            </p>
-          )}
+          <ErrorMessage message={errorMessage} />
           <BlackButton buttonTitle="Join" nextFunction={handleNext} />
         </div>
       </div>
