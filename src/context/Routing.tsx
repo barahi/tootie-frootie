@@ -1,5 +1,6 @@
 import { BrowserRouter as Router } from "react-router-dom";
 import { Routes, Route } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import MainScreen from "../components/pages/MainScreen";
 import JoinGame from "../components/pages/JoinGame";
 import CreateNewGame from "../components/pages/CreateNewGame";
@@ -14,10 +15,17 @@ export default function Routing() {
     <Router>
       <Routes>
         <Route path="/" element={<MainScreen />} />
-        <Route path="/join-game" element={<JoinGame />} />
+
+        <Route
+          path="/join-game"
+          element={<Navigate to="/join-game/room" replace />}
+        />
+        <Route path="/join-game/*" element={<JoinGame />} />
+
         <Route path="/new-game" element={<CreateNewGame />} />
+
         <Route path="/game-lobby" element={<GameLobby />} />
-        {/* placeholder for now, will link them to a context in GameRound*/}
+        {/* TODO: link them to a context in GameRound*/}
         <Route path="/submit" element={<SubmitPhase />} />
         <Route path="/review" element={<ReviewPhase />} />
         <Route path="/vote" element={<VotePhase />} />

@@ -23,7 +23,7 @@ function GameRound({ gamePhase }: { gamePhase: GamePhase }) {
     case "SCORE":
       return <ScorePhase />;
     default:
-      return <div>Invalid Phase</div>;
+      throw new Error("404: Page not found");
   }
 }
 

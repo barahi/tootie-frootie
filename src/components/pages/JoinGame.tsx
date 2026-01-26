@@ -1,26 +1,14 @@
-import { useState } from "react";
-import JoinGame1 from "./join-game/JoinGame1";
-import JoinGame2 from "./join-game/JoinGame2";
+import { Routes, Route } from "react-router-dom";
+import JoinGameRoomId from "./join-game/JoinGameRoomId";
+import JoinGamePassword from "./join-game/JoinGamePassword";
 
-function JoinGame() {
-  const [page, setPage] = useState(1);
-  const [roomId, setRoomId] = useState<string>("");
-  const nextPage = () => {
-    setPage((prev) => prev + 1);
-  };
-
-  const prevPage = () => {
-    setPage((prev) => prev - 1);
-  };
-
+export default function JoinGame() {
   return (
     <div className="w-full h-screen">
-      {page === 1 && (
-        <JoinGame1 roomId={roomId} setRoomId={setRoomId} nextPage={nextPage} />
-      )}
-      {page === 2 && <JoinGame2 roomId={roomId} prevPage={prevPage} />}
+      <Routes>
+        <Route path="room" element={<JoinGameRoomId />} />
+        <Route path="password/:roomId" element={<JoinGamePassword />} />
+      </Routes>
     </div>
   );
 }
-
-export default JoinGame;

@@ -1,23 +1,20 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useState } from "react";
 import Header from "../../shared/bars/Header";
 import BlackButton from "../../shared/buttons/BlackButton";
 import { PasswordInput } from "../../shared/user-input/passwordInput/PasswordInput";
 import { ErrorMessage } from "../../shared/messages/ErrorMessage";
 
-type Props = {
-  roomId: string;
-  prevPage: () => void;
-};
-
-function JoinGame2({ roomId, prevPage }: Props) {
+function JoinGamePassword() {
+  const { roomId } = useParams<{ roomId: string }>();
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [password, setPassword] = useState<string>("");
 
   const navigate = useNavigate();
+
   const handleNext = () => {
     //TO DO: validate password with backend
-    if (password === "") {
+    if (!password) {
       setErrorMessage("Password cannot be empty");
       return;
     }
@@ -57,4 +54,4 @@ function JoinGame2({ roomId, prevPage }: Props) {
   );
 }
 
-export default JoinGame2;
+export default JoinGamePassword;

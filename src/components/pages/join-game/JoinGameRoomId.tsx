@@ -6,13 +6,8 @@ import { useState } from "react";
 import { LabelInput } from "../../shared/user-input/basic-label-input/LabelInput";
 import { ErrorMessage } from "../../shared/messages/ErrorMessage";
 
-type Screen1Props = {
-  roomId: string;
-  setRoomId: (id: string) => void;
-  nextPage: () => void;
-};
-
-function JoinGame1({ roomId, setRoomId, nextPage }: Screen1Props) {
+function JoinGameRoomId() {
+  const [roomId, setRoomId] = useState<string>("");
   const { gameConfig } = useGameSetup();
   const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState<string>("");
@@ -24,7 +19,7 @@ function JoinGame1({ roomId, setRoomId, nextPage }: Screen1Props) {
     }
     const passwordRequired = gameConfig?.passwordRequirement || true;
     if (passwordRequired) {
-      nextPage();
+      navigate(`/join-game/password/${roomId}`);
     } else {
       navigate("/game-lobby/");
     }
@@ -56,4 +51,4 @@ function JoinGame1({ roomId, setRoomId, nextPage }: Screen1Props) {
   );
 }
 
-export default JoinGame1;
+export default JoinGameRoomId;
