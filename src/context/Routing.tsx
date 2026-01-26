@@ -4,10 +4,10 @@ import MainScreen from "../components/pages/MainScreen";
 import JoinGame from "../components/pages/JoinGame";
 import CreateNewGame from "../components/pages/CreateNewGame";
 import GameLobby from "../components/pages/GameLobby";
-import SubmitPhase from "../components/pages/game-rounds/SubmitPhase";
-import VotePhase from "../components/pages/game-rounds/VotePhase";
-import ReviewPhase from "../components/pages/game-rounds/ReviewPhase";
-import ScorePhase from "../components/pages/game-rounds/ScorePhase";
+import SubmitPhase from "../components/pages/game-rounds/phases/SubmitPhase";
+import VotePhase from "../components/pages/game-rounds/phases/VotePhase";
+import ReviewPhase from "../components/pages/game-rounds/phases/ReviewPhase";
+import ScorePhase from "../components/pages/game-rounds/phases/ScorePhase";
 
 export default function Routing() {
   return (

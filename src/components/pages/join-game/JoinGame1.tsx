@@ -11,7 +11,7 @@ type Screen1Props = {
   nextPage: () => void;
 };
 
-function Screen1({ roomId, setRoomId, nextPage }: Screen1Props) {
+function JoinGame1({ roomId, setRoomId, nextPage }: Screen1Props) {
   const { gameConfig } = useGameSetup();
   const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState<string>("");
@@ -31,12 +31,12 @@ function Screen1({ roomId, setRoomId, nextPage }: Screen1Props) {
 
   return (
     <div className="relative w-full h-screen">
-      <div className="absolute top-0 left-0 w-full z-10">
+      <div className="absolute top-0 left-0 z-10 w-full">
         <Header />
       </div>
-      <div className="absolute inset-0 flex justify-center items-center">
+      <div className="absolute inset-0 flex items-center justify-center">
         <div className="flex flex-col w-[30%] justify-center items-center bg-white border-none rounded-3xl p-8">
-          <h1 className="text-xl mt-2 mb-6 font-medium tracking-widest">
+          <h1 className="mt-2 mb-6 text-xl font-medium tracking-widest">
             {" "}
             Join an existing game{" "}
           </h1>
@@ -49,7 +49,7 @@ function Screen1({ roomId, setRoomId, nextPage }: Screen1Props) {
           </div>
 
           {errorMessage && (
-            <p className="bg-red-10 px-2 py-1 text-xs font-thin tracking-wider text-red-90 mb-6 border-none rounded-lg">
+            <p className="px-2 py-1 mb-6 text-xs font-thin tracking-wider border-none rounded-lg bg-red-10 text-red-90">
               {errorMessage}
             </p>
           )}
@@ -60,4 +60,4 @@ function Screen1({ roomId, setRoomId, nextPage }: Screen1Props) {
   );
 }
 
-export default Screen1;
+export default JoinGame1;

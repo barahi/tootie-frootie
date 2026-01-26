@@ -9,13 +9,13 @@ type Props = {
   prevPage: () => void;
 };
 
-function Screen2({ roomId, prevPage }: Props) {
+function JoinGame2({ roomId, prevPage }: Props) {
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [password, setPassword] = useState<string>("");
 
   const navigate = useNavigate();
   const handleNext = () => {
-    // validate password with backend
+    //TO DO: validate password with backend
     if (password === "") {
       setErrorMessage("Password cannot be empty");
       return;
@@ -24,17 +24,17 @@ function Screen2({ roomId, prevPage }: Props) {
   };
   return (
     <div className="relative w-full h-screen">
-      <div className="absolute top-0 left-0 w-full z-10">
+      <div className="absolute top-0 left-0 z-10 w-full">
         <Header />
       </div>
-      <div className="absolute inset-0 flex justify-center items-center">
+      <div className="absolute inset-0 flex items-center justify-center">
         <div className="flex flex-col w-[30%] justify-center items-center bg-white border-none rounded-3xl p-8">
-          <h1 className="text-xl mt-2 mb-6 font-medium tracking-widest">
+          <h1 className="mt-2 mb-6 text-xl font-medium tracking-widest">
             {" "}
             Join an existing game{" "}
           </h1>
           <div className="flex flex-col w-full gap-1 mb-4">
-            <p className="text-base text-gray-90 font-thin tracking-widest">
+            <p className="text-base font-thin tracking-widest text-gray-90">
               Room ID
             </p>
             <p className="text-base text-gray-90 font-light pt-0.5 pb-0.5 pl-1 pr-1 bg-gray-10 border-none rounded-md focus:outline-none focus:ring-2 focus:ring-gray-10">
@@ -45,17 +45,11 @@ function Screen2({ roomId, prevPage }: Props) {
             <PasswordInput
               password={password}
               onChange={setPassword}
-              className="text-base font-light bg-honeydew-90
-              w-8 border-1 rounded-lg border-gray-99 text-black text-sm font-thin transition-all duration-300
-                    focus:outline-none focus:ring-gray-50
-                    disabled:border-gray-90 text-base font-light pt-0.5 pb-0.5 pl-1 pr-1 bg-honeydew-90 border-solid border-gray-90 border rounded-md focus:outline-none focus:ring-2 focus:ring-gray-50
-                    disabled:bg-gray-50
-                    disabled:text-gray-50
-                    disabled:cursor-not-allowed"
+              className=" focus:ring-gray-50"
             />
           </div>
           {errorMessage && (
-            <p className="bg-red-10 px-2 py-1 text-xs font-thin tracking-wider text-red-90 mb-6 border-none rounded-lg">
+            <p className="px-2 py-1 mb-6 text-xs font-thin tracking-wider border-none rounded-lg bg-red-10 text-red-90">
               {errorMessage}
             </p>
           )}
@@ -66,4 +60,4 @@ function Screen2({ roomId, prevPage }: Props) {
   );
 }
 
-export default Screen2;
+export default JoinGame2;

@@ -1,6 +1,6 @@
 import { useState } from "react";
-import Screen1 from "./join-game/Screen1";
-import Screen2 from "./join-game/Screen2";
+import JoinGame1 from "./join-game/JoinGame1";
+import JoinGame2 from "./join-game/JoinGame2";
 
 function JoinGame() {
   const [page, setPage] = useState(1);
@@ -16,9 +16,9 @@ function JoinGame() {
   return (
     <div className="w-full h-screen">
       {page === 1 && (
-        <Screen1 roomId={roomId} setRoomId={setRoomId} nextPage={nextPage} />
+        <JoinGame1 roomId={roomId} setRoomId={setRoomId} nextPage={nextPage} />
       )}
-      {page === 2 && <Screen2 roomId={roomId} prevPage={prevPage} />}
+      {page === 2 && <JoinGame2 roomId={roomId} prevPage={prevPage} />}
     </div>
   );
 }

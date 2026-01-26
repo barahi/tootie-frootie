@@ -47,7 +47,13 @@ export const PasswordInput = ({
           onChange={addPassword}
           className={`
             w-full pt-0.5 pb-0.5 pl-1 pr-1
+            text-base font-light bg-honeydew-90
+              w-8 border-1 rounded-lg border-gray-99 text-black text-sm font-thin transition-all duration-300
             focus:outline-none focus:ring-1 focus:ring-gray-10
+            disabled:border-gray-90 text-base font-light pt-0.5 pb-0.5 pl-1 pr-1 bg-honeydew-90 border-solid border-gray-90 border rounded-md focus:outline-none focus:ring-2 focus:ring-gray-50
+                    disabled:bg-gray-50
+                    disabled:text-gray-50
+                    disabled:cursor-not-allowed"
             ${className}
           `}
         />

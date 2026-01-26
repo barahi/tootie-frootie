@@ -1,7 +1,7 @@
-import SubmitPhase from "./SubmitPhase";
-import ReviewPhase from "./ReviewPhase";
-import VotePhase from "./VotePhase";
-import ScorePhase from "./ScorePhase";
+import SubmitPhase from "./phases/SubmitPhase";
+import ReviewPhase from "./phases/ReviewPhase";
+import VotePhase from "./phases/VotePhase";
+import ScorePhase from "./phases/ScorePhase";
 
 type RoundPhase = "SUBMIT" | "REVIEW" | "VOTE" | "SCORE";
 
@@ -9,9 +9,7 @@ type GamePhase = {
   round: Number;
   totalRounds: Number;
   roundPhase: RoundPhase;
-  // players: Player[],
-  // answers: Answer[],
-  // scores: scoreMap,
+  // TODO: ADD players, answers, categories, scores from backend
 };
 
 function GameRound({ gamePhase }: { gamePhase: GamePhase }) {

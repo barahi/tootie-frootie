@@ -12,7 +12,7 @@ export function CopyTag({
   copyableTag,
   isPassword = false,
 }: CopyTagProps) {
-  const [isTaggCopied, setIsTagCopied] = useState(false);
+  const [isTagCopied, setIsTagCopied] = useState(false);
   const copyToClipboard = async () => {
     await navigator.clipboard.writeText(copyableTag);
     setIsTagCopied(true);
@@ -21,24 +21,24 @@ export function CopyTag({
 
   return (
     <div className="flex flex-col gap-[8px]">
-      <p className="font-thin tracking-wide text-sm px-1">{title}</p>
+      <p className="px-1 text-sm font-thin tracking-wide">{title}</p>
       <div
-        className="flex flex-row items-center justify-between gap-2 px-2 py-1 border-none rounded-lg bg-honeydew-90 cursor-pointer hover:bg-honeydew-80 transition-all duration-200"
+        className="flex flex-row items-center justify-between gap-2 px-2 py-1 transition-all duration-200 border-none rounded-lg cursor-pointer bg-honeydew-90 hover:bg-honeydew-80"
         onClick={copyToClipboard}
       >
         {" "}
         {isPassword ? (
-          <p className="text-black text-sm font-light tracking-wider">
+          <p className="text-sm font-light tracking-wider text-black">
             {"•".repeat(copyableTag.length)}
           </p>
         ) : (
-          <p className="text-black text-sm font-light tracking-wider">
+          <p className="text-sm font-light tracking-wider text-black">
             {copyableTag}
           </p>
         )}
         <Copy className="w-4 text-gray-99" />
-        {isTaggCopied && (
-          <span className="absolute bg-white text-gray-99 text-xs px-2 py-1 rounded-md">
+        {isTagCopied && (
+          <span className="absolute px-2 py-1 text-xs bg-white rounded-md text-gray-99">
             {`${title} copied!`}
           </span>
         )}

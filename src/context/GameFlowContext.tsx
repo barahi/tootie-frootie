@@ -2,9 +2,9 @@ import { createContext, useContext, useState } from "react";
 
 // define the params in game context state
 export interface GameFlowParams {
-  playerCount?: number;
+  numberOfPlayers?: number;
   numberOfRounds?: number;
-  categoryCount?: number;
+  numberOfCategories?: number;
   categories?: string[];
   timeLimit?: number;
   passwordRequirement?: boolean;
@@ -14,9 +14,9 @@ export interface GameFlowParams {
 }
 
 const initialConfig: GameFlowParams = {
-  playerCount: undefined,
+  numberOfPlayers: undefined,
   numberOfRounds: undefined,
-  categoryCount: undefined,
+  numberOfCategories: undefined,
   categories: [],
   timeLimit: undefined,
   passwordRequirement: false,
