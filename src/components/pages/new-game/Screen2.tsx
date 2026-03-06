@@ -1,4 +1,5 @@
 import Header from "../../shared/bars/Header";
+import ErrorMessageCard from "../../shared/cards/ErrorMessageCard";
 import { useState } from "react";
 import { useGameSetup } from "../../../context/GameFlowContext";
 import BlackButton from "../../shared/buttons/BlackButton";
@@ -7,8 +8,9 @@ function Screen2({ prevPage }: { prevPage: () => void }) {
   const { gameConfig, setGameConfig } = useGameSetup();
   const categoryCount = gameConfig.categoryCount || 2;
   const [categories, setCategories] = useState<string[]>(
-    Array(categoryCount).fill("")
+    Array(categoryCount).fill(""),
   );
+  const [errorMessage, setErrorMessage] = useState<string>("");
 
   const handleChange = (index: number, value: string) => {
     setCategories((prev) => {
@@ -19,6 +21,10 @@ function Screen2({ prevPage }: { prevPage: () => void }) {
   };
 
   const handleFinish = () => {
+    if (categories.some((cat) => cat.length === 0)) {
+      setErrorMessage("Please fill out all categories");
+      return;
+    }
     setGameConfig((prev) => ({
       ...prev,
       categories,
@@ -27,12 +33,12 @@ function Screen2({ prevPage }: { prevPage: () => void }) {
 
   return (
     <div className="relative w-full h-screen">
-      <div className="absolute top-0 left-0 w-full z-10">
+      <div className="absolute top-0 left-0 z-10 w-full">
         <Header />
       </div>
-      <div className="absolute inset-0 flex justify-center items-center">
-        <div className="flex flex-col w-1/3 justify-center items-center bg-white border-solid border-none border-1 rounded-3xl p-10">
-          <h1 className="text-xl mb-6 font-medium tracking-widest">
+      <div className="absolute inset-0 flex items-center justify-center">
+        <div className="flex flex-col items-center justify-center w-1/3 p-10 bg-white border-solid border-none border-1 rounded-3xl">
+          <h1 className="mb-6 text-xl font-medium tracking-widest">
             Define categories
           </h1>
           <div className="flex flex-col w-full">
@@ -54,6 +60,11 @@ function Screen2({ prevPage }: { prevPage: () => void }) {
                 </div>
               ))}
             </div>
+            {errorMessage && (
+              <div className="mb-6">
+                <ErrorMessageCard message={errorMessage} />{" "}
+              </div>
+            )}
             <div className="flex flex-row justify-between mt-2 mb-2">
               <BlackButton buttonTitle="Back" nextFunction={prevPage} />
               <BlackButton buttonTitle="Next" nextFunction={handleFinish} />

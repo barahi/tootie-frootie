@@ -9,6 +9,7 @@ import { useState } from "react";
 import { useGameSetup } from "../../../context/GameFlowContext";
 import { range } from "lodash";
 import { useEffect } from "react";
+import ErrorMessageCard from "../../shared/cards/ErrorMessageCard";
 
 function Screen1({ nextPage }: { nextPage: () => void }) {
   const { gameConfig, setGameConfig } = useGameSetup();
@@ -19,27 +20,28 @@ function Screen1({ nextPage }: { nextPage: () => void }) {
   const timeIntervals = ["30", "45", "60", "90", "120"];
 
   const [playerCount, setPlayerCount] = useState<number>(
-    gameConfig?.playerCount || 2
+    gameConfig?.playerCount || 2,
   );
   const [numberOfRounds, setNumberOfRounds] = useState<number>(
-    gameConfig?.numberOfRounds || 2
+    gameConfig?.numberOfRounds || 2,
   );
   const [categoryCount, setCategoryCount] = useState<number>(
-    gameConfig?.categoryCount || 2
+    gameConfig?.categoryCount || 2,
   );
   const [timeLimit, setTimeLimit] = useState<number>(
-    gameConfig?.timeLimit || 30
+    gameConfig?.timeLimit || 30,
   );
   const [passwordRequirement, setPasswordRequirement] = useState<boolean>(
-    gameConfig?.passwordRequirement || false
+    gameConfig?.passwordRequirement || false,
   );
 
   const [letterExclusion, setLetterExclusion] = useState<boolean>(
-    gameConfig?.letterExclusion || false
+    gameConfig?.letterExclusion || false,
   );
 
   const [password, setPassword] = useState<string>(gameConfig?.password || "");
   const [letters, setLetters] = useState<string[]>(gameConfig?.letters || []);
+  const [errorMessage, setErrorMessage] = useState<string>("");
 
   useEffect(() => {
     if (!letterExclusion) {
@@ -55,11 +57,11 @@ function Screen1({ nextPage }: { nextPage: () => void }) {
 
   const handleNext = () => {
     if (passwordRequirement && !password) {
-      alert("Please enter a password.");
+      setErrorMessage("Please enter a password.");
       return;
     }
     if (letterExclusion && letters.length === 0) {
-      alert("Please enter letters to exclude from game.");
+      setErrorMessage("Please enter letters to exclude from game.");
       return;
     }
 
@@ -79,16 +81,16 @@ function Screen1({ nextPage }: { nextPage: () => void }) {
 
   return (
     <div className="relative w-full h-screen">
-      <div className="absolute top-0 left-0 w-full z-10">
+      <div className="absolute top-0 left-0 z-10 w-full">
         <Header />
       </div>
-      <div className="absolute inset-0 flex justify-center items-center">
-        <div className="flex flex-col w-2/3 justify-center items-center bg-white border-none rounded-3xl p-10">
-          <h1 className="text-xl mt-2 mb-6 font-medium tracking-widest">
+      <div className="absolute inset-0 flex items-center justify-center">
+        <div className="flex flex-col items-center justify-center w-1/2 p-10 bg-white border-none rounded-3xl">
+          <h1 className="mt-2 mb-6 text-xl font-medium tracking-widest">
             Create a new lobby
           </h1>
-          <form id="new-game-form" className="flex flex-row w-full gap-10">
-            <div className="flex flex-col w-full gap-8 mt-6 mb-8">
+          <form id="new-game-form" className="flex flex-col w-full gap-10">
+            <div className="flex flex-col w-full gap-8 mt-6 mb-4">
               <DropdownSelect
                 selectItems={playerRoundNumbers}
                 title="Number of players"
@@ -104,42 +106,49 @@ function Screen1({ nextPage }: { nextPage: () => void }) {
                 title="Number of rounds"
                 onSelect={setNumberOfRounds}
               />
-              <div className="flex flex-row justify-between">
-                <p className="font-thin tracking-wider">
-                  Apply letter exclusion
-                </p>
-                <SliderButton
-                  value={letterExclusion}
-                  onSelect={() => setLetterExclusion((prev) => !prev)}
-                />
-              </div>
-              <LetterInput
-                letters={letters}
-                disabled={!letterExclusion}
-                onChange={setLetters}
-              />
-            </div>
-            <div className="flex flex-col w-full gap-8 mb-6 mt-6">
               <DropdownSelect
                 selectItems={timeIntervals.map((i) => i + " s")}
                 title="Maximum time per round"
                 onSelect={setTimeLimit}
               />
-              <div className="flex flex-row justify-between">
-                <p className="font-thin tracking-wider">Require password</p>
-                <SliderButton
-                  value={passwordRequirement}
-                  onSelect={() => setPasswordRequirement((prev) => !prev)}
+              <div className="flex flex-col gap-4">
+                <div className="flex flex-row justify-between">
+                  <p className="font-thin tracking-wider">
+                    Apply letter exclusion
+                  </p>
+                  <SliderButton
+                    value={letterExclusion}
+                    onSelect={() => setLetterExclusion((prev) => !prev)}
+                  />
+                </div>
+                <LetterInput
+                  letters={letters}
+                  disabled={!letterExclusion}
+                  onChange={setLetters}
                 />
               </div>
-              <PasswordInput
-                password={password}
-                disabled={!passwordRequirement}
-                onChange={setPassword}
-              />
+              <div className="flex flex-col gap-4">
+                <div className="flex flex-row justify-between ">
+                  <p className="font-thin tracking-wider">Require password</p>
+                  <SliderButton
+                    value={passwordRequirement}
+                    onSelect={() => setPasswordRequirement((prev) => !prev)}
+                  />
+                </div>
+                <PasswordInput
+                  password={password}
+                  disabled={!passwordRequirement}
+                  onChange={setPassword}
+                />
+              </div>
             </div>
           </form>
-          <div className="flex flex-row w-full justify-around">
+          {errorMessage && (
+            <div className="mb-6">
+              <ErrorMessageCard message={errorMessage} />{" "}
+            </div>
+          )}
+          <div className="flex flex-row justify-around w-full">
             <BlackButton
               buttonTitle="Back"
               nextFunction={() => navigate("/")}

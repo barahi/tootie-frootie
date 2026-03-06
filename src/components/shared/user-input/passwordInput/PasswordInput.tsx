@@ -27,7 +27,7 @@ export const PasswordInput = ({
     onChange((password = p));
   };
   return (
-    <div className="flex flex-col mb-4">
+    <div className="flex flex-col">
       <label
         htmlFor="password"
         className={`font-thin tracking-wider
@@ -43,18 +43,7 @@ export const PasswordInput = ({
           disabled={disabled}
           value={password}
           onChange={addPassword}
-          className="
-            w-full
-            border rounded-xl border-gray-99
-            p-1
-            text-black text-sm font-thin
-            transition-all duration-300
-            focus:outline-none focus:ring-gray-99
-            disabled:border-gray-90
-            disabled:bg-gray-50
-            disabled:text-gray-50
-            disabled:cursor-not-allowed
-          "
+          className="w-full p-1 text-sm font-thin text-black transition-all duration-300 border rounded-xl border-gray-99 focus:outline-none focus:ring-gray-99 disabled:border-gray-90 disabled:bg-gray-50 disabled:text-gray-50 disabled:cursor-not-allowed"
         />
         <button
           type="button"

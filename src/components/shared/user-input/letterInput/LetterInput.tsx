@@ -40,7 +40,7 @@ export const LetterInput = ({
   };
 
   return (
-    <div className="flex flex-col mb-4">
+    <div className="flex flex-col">
       <label
         htmlFor="letter-input"
         className={`font-thin tracking-wider
@@ -70,14 +70,7 @@ export const LetterInput = ({
           onKeyDown={handleKeyDown}
           disabled={disabled}
           maxLength={1}
-          className="
-                    w-8 border-1 rounded-lg border-gray-99 text-black text-sm font-thin transition-all duration-300
-                    focus:outline-none focus:ring-gray-99
-                    disabled:border-gray-90
-                    disabled:bg-gray-50
-                    disabled:text-gray-50
-                    disabled:cursor-not-allowed
-                  "
+          className="w-8 text-sm font-thin text-black transition-all duration-300 rounded-lg border-1 border-gray-99 focus:outline-none focus:ring-gray-99 disabled:border-gray-90 disabled:bg-gray-50 disabled:text-gray-50 disabled:cursor-not-allowed"
         ></input>
       </div>
     </div>
