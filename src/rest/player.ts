@@ -1,16 +1,17 @@
 import { post } from "./requests";
 
-interface PlayerPayload {
+export interface PlayerPayload {
   username: string;
 }
 
-interface PlayerJson {
-  playerId: string;
+export interface PlayerJson {
+  id: string;
+  username: string;
 }
 
 export async function addNewPlayer(
   payload: PlayerPayload,
 ): Promise<PlayerJson> {
-  const response = await post<PlayerPayload, PlayerJson>("/player", payload);
+  const response = await post<PlayerPayload, PlayerJson>("player", payload);
   return response;
 }

@@ -2,6 +2,7 @@ import Logo from "../shared/images/Logo";
 import ErrorMessageCard from "../shared/cards/ErrorMessageCard";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { addNewPlayer, PlayerPayload } from "../../rest/player";
 
 function MainScreen() {
   const navigate = useNavigate();
@@ -10,16 +11,21 @@ function MainScreen() {
   const saveUsername = (name: string) => {
     const fomattedUsername = name.trim();
     setUsername(fomattedUsername);
-    localStorage.setItem("username", fomattedUsername);
   };
 
-  const handleNavigate = (path: string) => {
+  const handleNavigate = async (path: string) => {
     if (!username) {
       setErrorMessage("Please fill out name");
       return;
     }
+    const userData: PlayerPayload = { username: username };
+    const request = await addNewPlayer(userData);
+    if (request.id != null) {
+      sessionStorage.setItem("id", request.id);
+      sessionStorage.setItem("username", request.username);
+      navigate(path);
+    }
     setErrorMessage("");
-    navigate(path);
   };
 
   return (

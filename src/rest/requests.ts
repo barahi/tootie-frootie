@@ -5,6 +5,7 @@ export async function post<REQUEST, RESPONSE>(
   path: string,
   body: REQUEST,
 ): Promise<RESPONSE> {
+  console.log("here");
   const response = await axios.post<RESPONSE>(`${BASE_URI}/${path}`, body);
   if (200 <= response.status && response.status <= 299) {
     return response.data;
