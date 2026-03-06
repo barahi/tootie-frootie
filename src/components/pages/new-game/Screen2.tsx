@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useGameSetup } from "../../../context/GameFlowContext";
 import BlackButton from "../../shared/buttons/BlackButton";
 import { useNavigate } from "react-router-dom";
+import { RoomPayload, RoomJson, createRoom } from "../../../rest/room";
 
 function Screen2({ prevPage }: { prevPage: () => void }) {
   const navigate = useNavigate();
@@ -22,12 +23,34 @@ function Screen2({ prevPage }: { prevPage: () => void }) {
     });
   };
 
-  const handleFinish = () => {
+  const handleFinish = async () => {
     if (categories.some((cat) => cat.length === 0)) {
       setErrorMessage("Please fill out all categories");
       return;
     }
-    navigate("/lobby");
+    const userId: string | null = sessionStorage.getItem("id");
+    if (userId === null) {
+      navigate("/");
+      return;
+    } else {
+      const roomData: RoomPayload = {
+        hostPlayerId: userId,
+        maxPlayers: gameConfig.playerCount || 2,
+        roundDuration: gameConfig.timeLimit || 30,
+        numberOfRounds: gameConfig.numberOfRounds || 2,
+        categories: gameConfig.categories || [],
+        excludedLetters: gameConfig.letterExclusion ? gameConfig.letters : [],
+        language: "english",
+        password: gameConfig.passwordRequirement ? gameConfig.password : "",
+      };
+      const request = await createRoom(roomData);
+      if (request.id !== null) {
+        sessionStorage.setItem("roomId", request.id);
+        navigate("/lobby");
+      } else {
+        return;
+      }
+    }
     setGameConfig((prev) => ({
       ...prev,
       categories,
