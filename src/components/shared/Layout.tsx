@@ -7,11 +7,11 @@ interface LayoutProps {
 
 function Layout({ children }: LayoutProps) {
   return (
-    <div className="relative w-full h-screen overflow-scroll">
-      <div className="absolute top-0 left-0 z-10 w-full">
+    <div className="flex flex-col h-screen">
+      <div className="w-full shrink-0">
         <Header />
       </div>
-      <main>{children}</main>
+      <main className="flex-1 overflow-y-auto">{children}</main>
     </div>
   );
 }

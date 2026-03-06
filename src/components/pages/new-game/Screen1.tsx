@@ -81,13 +81,16 @@ function Screen1({ nextPage }: { nextPage: () => void }) {
 
   return (
     <Layout>
-      <div className="absolute inset-0 flex justify-center w-full mt-[7%]">
+      <div className="flex justify-center w-full py-10">
         <div className="flex flex-col items-center justify-center w-[40%] p-10 bg-white border-none rounded-3xl">
-          <h1 className="mt-6 mb-6 text-xl font-medium tracking-widest ">
+          <h1 className="mt-2 mb-4 text-xl font-medium tracking-widest ">
             Create a new lobby
           </h1>
-          <form id="new-game-form" className="flex flex-col w-full gap-10">
-            <div className="flex flex-col w-full gap-8 mt-6 mb-4">
+          <form
+            id="new-game-form"
+            className="flex flex-col w-full gap-10 overflow-y"
+          >
+            <div className="flex flex-col w-full gap-8 mt-6 mb-8">
               <DropdownSelect
                 selectItems={playerRoundNumbers}
                 title="Number of players"
@@ -125,7 +128,7 @@ function Screen1({ nextPage }: { nextPage: () => void }) {
                 />
               </div>
               <div className="flex flex-col gap-4">
-                <div className="flex flex-row justify-between ">
+                <div className="flex flex-row justify-between">
                   <p className="font-thin tracking-wider">Require password</p>
                   <SliderButton
                     value={passwordRequirement}

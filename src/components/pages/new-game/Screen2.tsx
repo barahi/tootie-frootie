@@ -1,10 +1,12 @@
-import Header from "../../shared/bars/Header";
+import Layout from "../../shared/Layout";
 import ErrorMessageCard from "../../shared/cards/ErrorMessageCard";
 import { useState } from "react";
 import { useGameSetup } from "../../../context/GameFlowContext";
 import BlackButton from "../../shared/buttons/BlackButton";
+import { useNavigate } from "react-router-dom";
 
 function Screen2({ prevPage }: { prevPage: () => void }) {
+  const navigate = useNavigate();
   const { gameConfig, setGameConfig } = useGameSetup();
   const categoryCount = gameConfig.categoryCount || 2;
   const [categories, setCategories] = useState<string[]>(
@@ -25,6 +27,7 @@ function Screen2({ prevPage }: { prevPage: () => void }) {
       setErrorMessage("Please fill out all categories");
       return;
     }
+    navigate("/lobby");
     setGameConfig((prev) => ({
       ...prev,
       categories,
@@ -32,10 +35,7 @@ function Screen2({ prevPage }: { prevPage: () => void }) {
   };
 
   return (
-    <div className="relative w-full h-screen">
-      <div className="absolute top-0 left-0 z-10 w-full">
-        <Header />
-      </div>
+    <Layout>
       <div className="absolute inset-0 flex items-center justify-center">
         <div className="flex flex-col items-center justify-center w-1/3 p-10 bg-white border-solid border-none border-1 rounded-3xl">
           <h1 className="mb-6 text-xl font-medium tracking-widest">
@@ -72,7 +72,7 @@ function Screen2({ prevPage }: { prevPage: () => void }) {
           </div>
         </div>
       </div>
-    </div>
+    </Layout>
   );
 }
 
