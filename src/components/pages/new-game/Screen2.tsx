@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useGameSetup } from "../../../context/GameFlowContext";
 import BlackButton from "../../shared/buttons/BlackButton";
 import { useNavigate } from "react-router-dom";
-import { RoomPayload, RoomJson, createRoom } from "../../../rest/room";
+import { RoomPayload, createRoom } from "../../../rest/room";
 
 function Screen2({ prevPage }: { prevPage: () => void }) {
   const navigate = useNavigate();
