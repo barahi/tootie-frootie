@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import Screen1 from "./new-game/Screen1";
-import Screen2 from "./new-game/Screen2";
+import NewGameFinal from "./new-game/NewGameFinal";
+import NewGameInitial from "./new-game/NewGameInitial";
 import { RoomPayload, createRoom } from "../../rest/room";
 import { useNavigate } from "react-router-dom";
 
@@ -65,7 +65,7 @@ function CreateNewGame() {
   switch (phase) {
     case CreatePhase.INITIAL:
       return (
-        <Screen1
+        <NewGameInitial
           playerCount={playerCount}
           setPlayerCount={setPlayerCount}
           numberOfRounds={numberOfRounds}
@@ -87,7 +87,7 @@ function CreateNewGame() {
       );
     case CreatePhase.FINAL:
       return (
-        <Screen2
+        <NewGameFinal
           categories={categories}
           setCategories={setCategories}
           prevPage={() => setPhase(CreatePhase.INITIAL)}

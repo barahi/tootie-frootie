@@ -9,7 +9,7 @@ export default function DropdownSelect({
   onSelect,
 }: DropdownSelectProps) {
   return (
-    <div className="flex flex-row justify-between">
+    <div className="flex flex-row justify-between w-full">
       <p className="font-thin tracking-wider">{title}</p>
       <select
         id={title}

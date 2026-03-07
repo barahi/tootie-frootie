@@ -10,7 +10,7 @@ import { useGameSetup } from "../../../context/GameFlowContext";
 import { range } from "lodash";
 import ErrorMessageCard from "../../shared/cards/ErrorMessageCard";
 
-function Screen1({
+function NewGameInitial({
   playerCount,
   setPlayerCount,
   numberOfRounds,
@@ -162,4 +162,4 @@ function Screen1({
   );
 }
 
-export default Screen1;
+export default NewGameInitial;
