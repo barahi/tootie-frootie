@@ -1,18 +1,19 @@
 import Layout from "../../shared/Layout";
 import ErrorMessageCard from "../../shared/cards/ErrorMessageCard";
-import { useState } from "react";
-import { useGameSetup } from "../../../context/GameFlowContext";
+import { Dispatch, SetStateAction, useState } from "react";
 import BlackButton from "../../shared/buttons/BlackButton";
-import { useNavigate } from "react-router-dom";
-import { RoomPayload, createRoom } from "../../../rest/room";
 
-function Screen2({ prevPage }: { prevPage: () => void }) {
-  const navigate = useNavigate();
-  const { gameConfig, setGameConfig } = useGameSetup();
-  const categoryCount = gameConfig.categoryCount || 2;
-  const [categories, setCategories] = useState<string[]>(
-    Array(categoryCount).fill(""),
-  );
+function Screen2({
+  categories,
+  setCategories,
+  prevPage,
+  createGame,
+}: {
+  categories: Array<string>;
+  setCategories: Dispatch<SetStateAction<Array<string>>>;
+  prevPage: () => void;
+  createGame: () => Promise<void>;
+}) {
   const [errorMessage, setErrorMessage] = useState<string>("");
 
   const handleChange = (index: number, value: string) => {
@@ -28,33 +29,7 @@ function Screen2({ prevPage }: { prevPage: () => void }) {
       setErrorMessage("Please fill out all categories");
       return;
     }
-    const userId: string | null = sessionStorage.getItem("id");
-    if (userId === null) {
-      navigate("/");
-      return;
-    } else {
-      const roomData: RoomPayload = {
-        hostPlayerId: userId,
-        maxPlayers: gameConfig.playerCount || 2,
-        roundDuration: gameConfig.timeLimit || 30,
-        numberOfRounds: gameConfig.numberOfRounds || 2,
-        categories: gameConfig.categories || [],
-        excludedLetters: gameConfig.letterExclusion ? gameConfig.letters : [],
-        language: "english",
-        password: gameConfig.passwordRequirement ? gameConfig.password : "",
-      };
-      const request = await createRoom(roomData);
-      if (request.id !== null) {
-        sessionStorage.setItem("roomId", request.id);
-        navigate("/lobby");
-      } else {
-        return;
-      }
-    }
-    setGameConfig((prev) => ({
-      ...prev,
-      categories,
-    }));
+    await createGame();
   };
 
   return (

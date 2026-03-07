@@ -5,13 +5,48 @@ import BlackButton from "../../shared/buttons/BlackButton";
 import { LetterInput } from "../../shared/user-input/letterInput/LetterInput";
 import { PasswordInput } from "../../shared/user-input/passwordInput/PasswordInput";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { useGameSetup } from "../../../context/GameFlowContext";
 import { range } from "lodash";
-import { useEffect } from "react";
 import ErrorMessageCard from "../../shared/cards/ErrorMessageCard";
 
-function Screen1({ nextPage }: { nextPage: () => void }) {
+function Screen1({
+  playerCount,
+  setPlayerCount,
+  numberOfRounds,
+  setNumberOfRounds,
+  categoryCount,
+  setCategoryCount,
+  timeLimit,
+  setTimeLimit,
+  passwordRequirement,
+  setPasswordRequirement,
+  password,
+  setPassword,
+  letterExclusion,
+  setLetterExclusion,
+  letters,
+  setLetters,
+  nextPage,
+}: {
+  nextPage: () => void;
+  playerCount: number;
+  setPlayerCount: Dispatch<SetStateAction<number>>;
+  numberOfRounds: number;
+  setNumberOfRounds: Dispatch<SetStateAction<number>>;
+  categoryCount: number;
+  setCategoryCount: Dispatch<SetStateAction<number>>;
+  timeLimit: number;
+  setTimeLimit: Dispatch<SetStateAction<number>>;
+  passwordRequirement: boolean;
+  setPasswordRequirement: Dispatch<SetStateAction<boolean>>;
+  password: string;
+  setPassword: Dispatch<SetStateAction<string>>;
+  letterExclusion: boolean;
+  setLetterExclusion: Dispatch<SetStateAction<boolean>>;
+  letters: Array<string>;
+  setLetters: Dispatch<SetStateAction<Array<string>>>;
+}) {
   const { gameConfig, setGameConfig } = useGameSetup();
   const navigate = useNavigate();
 
@@ -19,41 +54,7 @@ function Screen1({ nextPage }: { nextPage: () => void }) {
   const categoryNumbers = range(2, 6).map((n) => `${n}`);
   const timeIntervals = ["30", "45", "60", "90", "120"];
 
-  const [playerCount, setPlayerCount] = useState<number>(
-    gameConfig?.playerCount || 2,
-  );
-  const [numberOfRounds, setNumberOfRounds] = useState<number>(
-    gameConfig?.numberOfRounds || 2,
-  );
-  const [categoryCount, setCategoryCount] = useState<number>(
-    gameConfig?.categoryCount || 2,
-  );
-  const [timeLimit, setTimeLimit] = useState<number>(
-    gameConfig?.timeLimit || 30,
-  );
-  const [passwordRequirement, setPasswordRequirement] = useState<boolean>(
-    gameConfig?.passwordRequirement || false,
-  );
-
-  const [letterExclusion, setLetterExclusion] = useState<boolean>(
-    gameConfig?.letterExclusion || false,
-  );
-
-  const [password, setPassword] = useState<string>(gameConfig?.password || "");
-  const [letters, setLetters] = useState<string[]>(gameConfig?.letters || []);
   const [errorMessage, setErrorMessage] = useState<string>("");
-
-  useEffect(() => {
-    if (!letterExclusion) {
-      setLetters([]);
-    }
-  }, [letterExclusion]);
-
-  useEffect(() => {
-    if (!passwordRequirement) {
-      setPassword("");
-    }
-  }, [passwordRequirement]);
 
   const handleNext = () => {
     if (passwordRequirement && !password) {
