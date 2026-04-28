@@ -3,7 +3,7 @@ import ErrorMessageCard from "../../shared/cards/ErrorMessageCard";
 import { Dispatch, SetStateAction, useState } from "react";
 import BlackButton from "../../shared/buttons/BlackButton";
 
-function Screen2({
+function NewGameFinal({
   categories,
   setCategories,
   prevPage,
@@ -22,6 +22,7 @@ function Screen2({
       updated[index] = value;
       return updated;
     });
+    console.log(categories);
   };
 
   const handleFinish = async () => {
@@ -74,4 +75,4 @@ function Screen2({
   );
 }
 
-export default Screen2;
+export default NewGameFinal;

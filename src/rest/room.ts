@@ -24,5 +24,6 @@ export interface RoomJson {
 
 export async function createRoom(payload: RoomPayload): Promise<RoomJson> {
   const response = await post<RoomPayload, RoomJson>("room", payload);
+  console.log("Response from create room: ", JSON.stringify(response));
   return response;
 }

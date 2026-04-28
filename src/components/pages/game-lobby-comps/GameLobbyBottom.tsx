@@ -18,6 +18,7 @@ function GameLobbyBottom({
 }: GameLobbyBottomProps) {
   // TO DO: Get number of players in lobby from backend
   const currPlayerNum = 1;
+  const username = sessionStorage.getItem("username");
   return (
     <div className="flex flex-row w-full h-full gap-4">
       {/* Part 2: Player list area */}
@@ -32,7 +33,7 @@ function GameLobbyBottom({
         </div>
         {/* player tags */}
         <div className="flex flex-col w-full gap-2">
-          <PlayerInfoTag number={1} />
+          <PlayerInfoTag number={1} name={username || "?"} isHost={true} />
         </div>
       </div>
       <div className="flex flex-col w-[45%] gap-6">

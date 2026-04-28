@@ -6,7 +6,6 @@ import { LetterInput } from "../../shared/user-input/letterInput/LetterInput";
 import { PasswordInput } from "../../shared/user-input/passwordInput/PasswordInput";
 import { useNavigate } from "react-router-dom";
 import { Dispatch, SetStateAction, useState } from "react";
-import { useGameSetup } from "../../../context/GameFlowContext";
 import { range } from "lodash";
 import ErrorMessageCard from "../../shared/cards/ErrorMessageCard";
 
@@ -47,7 +46,6 @@ function NewGameInitial({
   letters: Array<string>;
   setLetters: Dispatch<SetStateAction<Array<string>>>;
 }) {
-  const { gameConfig, setGameConfig } = useGameSetup();
   const navigate = useNavigate();
 
   const playerRoundNumbers = range(2, 8).map((n) => `${n}`);
@@ -65,18 +63,6 @@ function NewGameInitial({
       setErrorMessage("Please enter letters to exclude from game.");
       return;
     }
-
-    setGameConfig({
-      ...gameConfig,
-      playerCount: playerCount,
-      numberOfRounds: numberOfRounds,
-      categoryCount,
-      timeLimit,
-      password,
-      passwordRequirement,
-      letterExclusion,
-      letters,
-    });
     nextPage();
   };
 
