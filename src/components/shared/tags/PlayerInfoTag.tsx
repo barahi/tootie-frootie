@@ -28,11 +28,11 @@ const PlayerInfoTag = ({
           <p className="text-xs text-center bg-blue-90 text-white border-none rounded-full px-[2.2%] py-[2px]">
             {name.slice(0, 1).toUpperCase()}
           </p>
-          <p className="text-sm font-thin tracking-wider text-gray-99">
+          <p className="text-[clamp(0.8rem,1.2vw,1rem)] font-thin tracking-wider text-gray-99">
             {name}
           </p>
           {isHost && (
-            <p className="text-[10px] tracking-wider font-thin border-red-50 border-1 rounded-2xl px-2 py-[1px] bg-red-10 text-red-90 absolute right-3">
+            <p className="text-[clamp(6px,1vw,10px)] tracking-wider font-thin border-red-50 border-1 rounded-2xl px-2 py-[1px] bg-red-10 text-red-90 absolute right-3">
               Admin
             </p>
           )}

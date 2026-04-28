@@ -1,14 +1,17 @@
 import Layout from "../shared/Layout";
+import { useState } from "react";
 import { useGameSetup } from "../../context/GameFlowContext";
 import { useNavigate, useParams } from "react-router-dom";
 import { Navigate } from "react-router-dom";
 import GameLobbyTop from "./game-lobby-comps/GameLobbyTop";
 import GameLobbyBottom from "./game-lobby-comps/GameLobbyBottom";
+import BinaryActionScreenMessage from "../shared/messages/BinaryActionScreenMessage";
 
 function GameLobby() {
   const { gameConfig } = useGameSetup();
   const { roomId } = useParams<{ roomId: string }>();
   const navigate = useNavigate();
+  const [totalScreenMessage, setTotalScreenMessage] = useState<boolean>(false);
 
   if (!roomId) {
     return <Navigate to="/join-game/room" replace />;
@@ -22,6 +25,10 @@ function GameLobby() {
     password: gameConfig.password || "",
   };
 
+  const handleTotalScreenMessage = () => {
+    setTotalScreenMessage(true);
+  };
+
   const handleNext = () => {
     console.log("Room id is " + roomId);
     navigate(`/submit/${roomId}`);
@@ -29,6 +36,15 @@ function GameLobby() {
 
   return (
     <Layout>
+      {totalScreenMessage && (
+        <BinaryActionScreenMessage
+          message="Are you sure you want to start the game?"
+          action1="Yes"
+          action2="No"
+          function1={handleNext}
+          function2={() => setTotalScreenMessage(false)}
+        />
+      )}
       <div className="absolute inset-0 flex items-center justify-center">
         <div className="flex flex-col w-[55%] items-center gap-4 border-solid border-none border-1 rounded-3xl p-10">
           <p className="p-2 pl-4 pr-4 text-lg font-thin tracking-wider border-none bg-gray-50 opacity-80 rounded-xl">
@@ -39,7 +55,7 @@ function GameLobby() {
             password={gameParameters.password}
             numberOfPlayers={gameParameters.numberOfPlayers}
             roomCode={roomId!}
-            handleNext={handleNext}
+            handleNext={handleTotalScreenMessage}
           />
         </div>
       </div>
