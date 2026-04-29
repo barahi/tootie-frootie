@@ -62,6 +62,7 @@ function CreateNewGame() {
       gameConfig.letters = request.excludedLetters;
       gameConfig.numberOfPlayers = request.maxPlayers;
       gameConfig.password = request.password;
+      console.log("Game created with id: " + request.id);
       navigate(`/game-lobby/${request.id}`);
     } else {
       navigate("/");

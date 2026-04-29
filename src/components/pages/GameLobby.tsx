@@ -8,7 +8,7 @@ import GameLobbyBottom from "./game-lobby-comps/GameLobbyBottom";
 import BinaryActionScreenMessage from "../shared/messages/BinaryActionScreenMessage";
 
 function GameLobby() {
-  const { gameConfig } = useGameSetup();
+  const { setIsInitialized, gameConfig } = useGameSetup();
   const { roomId } = useParams<{ roomId: string }>();
   const navigate = useNavigate();
   const [totalScreenMessage, setTotalScreenMessage] = useState<boolean>(false);
@@ -30,7 +30,8 @@ function GameLobby() {
   };
 
   const handleNext = () => {
-    console.log("Room id is " + roomId);
+    setIsInitialized(true);
+    console.log("Setting is initialized to true, navigating to submit phase");
     navigate(`/submit/${roomId}`);
   };
 

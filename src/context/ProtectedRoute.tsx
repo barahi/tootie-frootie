@@ -6,9 +6,9 @@ export default function ProtectedRoute({
 }: {
   children: React.ReactNode;
 }) {
-  const { gameConfig } = useGameSetup();
+  const { isInitialized } = useGameSetup();
 
-  if (!gameConfig) {
+  if (!isInitialized) {
     return <Navigate to="/new-game" replace />;
   }
   return <>{children}</>;
