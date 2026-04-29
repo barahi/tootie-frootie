@@ -1,5 +1,5 @@
 import Header from "../../shared/bars/Header";
-import BlackButton from "../../shared/buttons/BlackButton";
+import BlackButton from "../../shared/buttons/PlainColoredButton";
 import { useGameSetup } from "../../../context/GameFlowContext";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";

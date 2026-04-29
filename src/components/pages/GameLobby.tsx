@@ -34,6 +34,10 @@ function GameLobby() {
     navigate(`/submit/${roomId}`);
   };
 
+  const exitGame = () => {
+    navigate("/");
+  };
+
   return (
     <Layout>
       {totalScreenMessage && (
@@ -56,6 +60,7 @@ function GameLobby() {
             numberOfPlayers={gameParameters.numberOfPlayers}
             roomCode={roomId!}
             handleNext={handleTotalScreenMessage}
+            exitGame={exitGame}
           />
         </div>
       </div>

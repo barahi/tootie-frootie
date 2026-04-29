@@ -1,7 +1,7 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { useState } from "react";
 import Header from "../../shared/bars/Header";
-import BlackButton from "../../shared/buttons/BlackButton";
+import BlackButton from "../../shared/buttons/PlainColoredButton";
 import { PasswordInput } from "../../shared/user-input/passwordInput/PasswordInput";
 import { ErrorMessage } from "../../shared/messages/ErrorMessage";
 

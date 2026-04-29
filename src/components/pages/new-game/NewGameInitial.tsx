@@ -1,7 +1,7 @@
 import Layout from "../../shared/Layout";
 import SliderButton from "../../shared/buttons/SliderButton";
 import DropdownSelect from "../../shared/dropdowns/DropdownSelect";
-import BlackButton from "../../shared/buttons/BlackButton";
+import BlackButton from "../../shared/buttons/PlainColoredButton";
 import { LetterInput } from "../../shared/user-input/letterInput/LetterInput";
 import { PasswordInput } from "../../shared/user-input/passwordInput/PasswordInput";
 import { useNavigate } from "react-router-dom";

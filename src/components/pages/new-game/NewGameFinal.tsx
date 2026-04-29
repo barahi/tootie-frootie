@@ -1,7 +1,7 @@
 import Layout from "../../shared/Layout";
 import ErrorMessageCard from "../../shared/cards/ErrorMessageCard";
 import { Dispatch, SetStateAction, useState } from "react";
-import BlackButton from "../../shared/buttons/BlackButton";
+import BlackButton from "../../shared/buttons/PlainColoredButton";
 
 function NewGameFinal({
   categories,

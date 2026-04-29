@@ -1,13 +1,14 @@
 import { User } from "lucide-react";
 import PlayerInfoTag from "../../shared/tags/PlayerInfoTag";
 import CopyTag from "../../shared/tags/CopyTag";
-import BlackButton from "../../shared/buttons/BlackButton";
+import PlainColoredButton from "../../shared/buttons/PlainColoredButton";
 
 type GameLobbyBottomProps = {
   password: string;
   numberOfPlayers: number;
   roomCode: string;
   handleNext: () => void;
+  exitGame: () => void;
 };
 
 function GameLobbyBottom({
@@ -15,6 +16,7 @@ function GameLobbyBottom({
   numberOfPlayers,
   roomCode,
   handleNext,
+  exitGame,
 }: GameLobbyBottomProps) {
   // TO DO: Get number of players in lobby from backend
   const currPlayerNum = 1;
@@ -34,6 +36,9 @@ function GameLobbyBottom({
         {/* player tags */}
         <div className="flex flex-col w-full gap-2">
           <PlayerInfoTag number={1} name={username || "?"} isHost={true} />
+          {Array.from({ length: numberOfPlayers - 1 }).map((_, idx) => (
+            <PlayerInfoTag key={idx} number={idx + 2} isHost={false} />
+          ))}
         </div>
       </div>
       <div className="flex flex-col w-[45%] gap-6">
@@ -53,11 +58,18 @@ function GameLobbyBottom({
             </div>
           </div>
         </div>
-        <BlackButton
-          buttonTitle="Start Game"
-          nextFunction={handleNext}
-          className="w-full p-[4px] text-md"
-        />
+        <div className="flex flex-col w-full gap-2">
+          <PlainColoredButton
+            buttonTitle="Start Game"
+            nextFunction={handleNext}
+            className="w-full p-[4px] text-md"
+          />
+          <PlainColoredButton
+            buttonTitle="Exit Game"
+            nextFunction={exitGame}
+            className="w-full p-[4px] text-md bg-red-50"
+          />
+        </div>
       </div>
     </div>
   );
