@@ -2,6 +2,7 @@ import Layout from "../../shared/Layout";
 import ErrorMessageCard from "../../shared/cards/ErrorMessageCard";
 import { Dispatch, SetStateAction, useState } from "react";
 import BlackButton from "../../shared/buttons/PlainColoredButton";
+import { CategoryInput } from "../../shared/user-input/basic-label-input/CategoryInput";
 
 function NewGameFinal({
   categories,
@@ -43,20 +44,12 @@ function NewGameFinal({
           <div className="flex flex-col w-full">
             <div className="flex flex-col w-full gap-6 mb-6">
               {categories.map((cat, idx) => (
-                <div className="flex flex-col p-0.25">
-                  <label
-                    htmlFor={cat + idx}
-                    className="font-thin tracking-wide"
-                  >{`Category ${idx + 1}`}</label>
-                  <input
-                    id={cat + idx}
-                    type="text"
-                    key={idx}
-                    value={cat}
-                    onChange={(e) => handleChange(idx, e.target.value)}
-                    className="text-base font-light pt-0.5 pb-0.5 pl-1 pr-1 bg-honeydew-90 border-solid border-gray-90 border-1 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-50"
-                  ></input>
-                </div>
+                <CategoryInput
+                  key={idx}
+                  num={idx}
+                  input={cat}
+                  setInput={(value) => handleChange(idx, value)}
+                />
               ))}
             </div>
             {errorMessage && (

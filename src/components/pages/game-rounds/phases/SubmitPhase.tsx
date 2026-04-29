@@ -35,7 +35,18 @@ function SubmitPhase() {
           </div>
         </div>
         {/* User answers Part */}
-        <div className="flex flex-col w-[68%] bg-white border-none rounded-xl p-4"></div>
+        <div className="flex flex-col w-[68%] bg-white border-none rounded-xl p-4">
+          <div>
+            <div>
+              <p>Enter your answers</p>
+              <div>
+                <p>All answers must start with the letter</p>
+                <span className="text-2xl font-bold">A</span>
+              </div>
+            </div>
+            {/* timer componenet */}
+          </div>
+        </div>
       </div>
     </Layout>
   );
