@@ -2,14 +2,14 @@ import { createContext, useContext, useState } from "react";
 
 // define the params in game context state
 export interface GameFlowParams {
-  numberOfPlayers?: number;
-  numberOfRounds?: number;
-  numberOfCategories?: number;
-  categories?: string[];
-  timeLimit?: number;
-  passwordRequirement?: boolean;
+  numberOfPlayers: number;
+  numberOfRounds: number;
+  numberOfCategories: number;
+  categories: string[];
+  timeLimit: number;
+  passwordRequirement: boolean;
   password: string;
-  letterExclusion?: boolean;
+  letterExclusion: boolean;
   letters: string[];
 }
 

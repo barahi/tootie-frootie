@@ -17,7 +17,7 @@ function SubmitPhase() {
     }
   }, [isInitialized, navigate]);
 
-  const [answersAllowed, setAnswersAllowed] = useState<boolean>(false);
+  const [answersAllowed, setAnswersAllowed] = useState<boolean>(true);
   const totalRounds = gameConfig.numberOfRounds;
   const categories = gameConfig.categories;
   const timeLimit = gameConfig.timeLimit;
@@ -34,11 +34,28 @@ function SubmitPhase() {
     { id: 7, name: "Imu" },
   ];
 
+  const [categoryAnswers, setCategoryAnswers] = useState<Map<string, string>>(
+    () => {
+      const initialMap = new Map<string, string>();
+      categories.forEach((cat) => initialMap.set(cat, ""));
+      return initialMap;
+    },
+  );
+
+  const addCategoryAnswer = (category: string, answer: string) => {
+    if (!answersAllowed) return;
+    setCategoryAnswers((prev) => {
+      const updated = new Map(prev);
+      updated.set(category, answer);
+      return updated;
+    });
+  };
+
   return (
     <Layout phaseName={`Round ${currRound}/${totalRounds} `}>
       <div className="flex flex-row w-full items-start justify-center gap-[2%]">
         {/* LeaderBoard Part */}
-        <div className="flex flex-col w-[30%] bg-white border-none rounded-xl p-4">
+        <div className="flex flex-col w-[20%] bg-white border-none rounded-xl p-4">
           <p className="mb-2 text-sm font-thin tracking-wide"> Leaderboard</p>
           <div className="flex flex-col w-full gap-2">
             {players.map((p) => (
@@ -52,7 +69,7 @@ function SubmitPhase() {
           </div>
         </div>
         {/* User answers Part */}
-        <div className="flex flex-col w-[68%] bg-white border-none rounded-xl px-4 py-4">
+        <div className="flex flex-col w-[50%] bg-white border-none rounded-xl px-4 py-4">
           <div className="flex justify-between w-full">
             <div className="flex flex-col">
               <p className="font-light tracking-wide font-small text-md text-gray-99">
@@ -79,9 +96,11 @@ function SubmitPhase() {
                 key={idx}
                 name={categories[idx]}
                 num={idx}
-                input={""}
+                input={categoryAnswers.get(categories[idx]) || ""}
                 canAddInput={answersAllowed}
-                setInput={() => {}}
+                setInput={(value) => {
+                  addCategoryAnswer(categories[idx], value);
+                }}
               />
             ))}
           </div>

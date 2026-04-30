@@ -47,7 +47,9 @@ function NewGameFinal({
                 <CategoryInput
                   key={idx}
                   num={idx}
+                  name={null}
                   input={cat}
+                  canAddInput={true}
                   setInput={(value) => handleChange(idx, value)}
                 />
               ))}

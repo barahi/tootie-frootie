@@ -1,20 +1,21 @@
 interface CategoryInputProps {
   num: number;
-  name?: string | null;
+  name: string | null;
   input: string;
-  canAddInput?: boolean | false;
+  canAddInput?: boolean;
   setInput: (value: string) => void;
 }
 
 export const CategoryInput = ({
   num,
   name,
-  input,
   canAddInput,
+  input,
   setInput,
 }: CategoryInputProps) => {
   const addInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
+    if (!canAddInput) return;
     if (!e.target.value) {
       setInput("");
       return;
@@ -32,7 +33,7 @@ export const CategoryInput = ({
         type="text"
         key={num}
         value={input}
-        disabled={canAddInput}
+        disabled={!canAddInput}
         onChange={(e) => addInput(e)}
         className="text-base font-light pt-0.5 pb-0.5 pl-1 pr-1 bg-honeydew-90 border-solid border-gray-90 border-1 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-50"
       ></input>
