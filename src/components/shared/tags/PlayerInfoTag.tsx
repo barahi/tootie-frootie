@@ -1,6 +1,6 @@
 type PlayerInfoTagProps = {
   number: number;
-  name?: string | null;
+  name?: string;
   isHost?: boolean;
   className?: string;
 };
