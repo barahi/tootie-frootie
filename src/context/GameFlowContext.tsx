@@ -40,7 +40,12 @@ export function GameSetupProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <GameFlowContext.Provider
-      value={{ gameConfig, setGameConfig, isInitialized, setIsInitialized }}
+      value={{
+        gameConfig,
+        setGameConfig,
+        isInitialized,
+        setIsInitialized,
+      }}
     >
       {children}
     </GameFlowContext.Provider>

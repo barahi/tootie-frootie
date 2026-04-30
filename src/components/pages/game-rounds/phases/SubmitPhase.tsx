@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 
 function SubmitPhase() {
   const navigate = useNavigate();
+  const queryParams = new URLSearchParams(window.location.search);
   const { isInitialized, gameConfig } = useGameSetup();
 
   useEffect(() => {
@@ -49,6 +50,14 @@ function SubmitPhase() {
       updated.set(category, answer);
       return updated;
     });
+  };
+
+  // TO DO: Add function to submit categoryAnswers from playerId and round number to backend
+
+  const changeRound = () => {
+    //TO DO: Call backend to make sure we can move to next round.
+    const roomId = queryParams.get("roomId");
+    navigate(`/review/${roomId}`);
   };
 
   return (
@@ -108,7 +117,7 @@ function SubmitPhase() {
             <PlainColoredButton
               buttonTitle="Finish"
               nextFunction={() => {
-                // submit answers to backend
+                changeRound();
               }}
             />
           </div>
