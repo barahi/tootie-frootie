@@ -23,8 +23,8 @@ function SubmitPhase() {
   const categories = gameConfig.categories;
   const timeLimit = gameConfig.timeLimit;
 
-  let currRound = 1; // This should be derived from game state
-  // fetch player[] from backend
+  // TO DO: Replace with actual player data from backend
+  let currRound = 1;
   const players = [
     { id: 1, name: "Bon" },
     { id: 2, name: "Bonney" },
@@ -34,6 +34,7 @@ function SubmitPhase() {
     { id: 6, name: "Ivan" },
     { id: 7, name: "Imu" },
   ];
+  //
 
   const [categoryAnswers, setCategoryAnswers] = useState<Map<string, string>>(
     () => {

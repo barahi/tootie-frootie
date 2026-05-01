@@ -1,9 +1,13 @@
 import Layout from "../PhaseLayout";
+import { useState } from "react";
 import ReviewPhasePlayerScoreCard from "../../../shared/tags/ReviewPhasePlayerScoreCard";
 import PlainColoredButton from "../../../shared/buttons/PlainColoredButton";
+import VoteAnswerCard from "../../../shared/cards/VoteAnswerCard";
 
 function ReviewPhase() {
   const currUsername = sessionStorage.getItem("username");
+  const [flagScreenVisible, setFlagScreenVisible] = useState<boolean>(false);
+  // TO DO: Replace with actual category and player answers from backend
   const category = "Animal";
   const playerAnswers = [
     { playerId: 1, name: currUsername, answer: "Bear", score: 100 },
@@ -14,18 +18,28 @@ function ReviewPhase() {
     { playerId: 6, name: "Ivan", answer: "Beaver", score: 33 },
     { playerId: 7, name: "Imu", answer: "Beaver", score: 33 },
   ];
+  //
 
   const flagAnswer = (
     playerId: number,
     playerName: string,
     playerAnswer: string,
   ) => {
+    setFlagScreenVisible(true);
     // Implementation for flagging an answer
     console.log(`Flagging answer from ${playerName}: ${playerAnswer}`);
   };
 
   return (
     <Layout phaseName="Review Phase">
+      {flagScreenVisible && (
+        <VoteAnswerCard
+          category={category}
+          player={playerAnswers[0].name!}
+          answerToReview={playerAnswers[0].answer}
+        />
+      )}
+
       <div className="flex flex-row justify-center w-full">
         <div className="flex flex-col w-[80%] max-w-3xl bg-white border-none rounded-xl p-6 gap-2">
           <div className="flex flex-row gap-1">
@@ -41,7 +55,7 @@ function ReviewPhase() {
                 <ReviewPhasePlayerScoreCard
                   key={player.playerId}
                   playerId={player.playerId}
-                  isHost={false}
+                  isMe={false}
                   playerName={player.name!}
                   playerAnswer={player.answer}
                   playerScore={player.score}
@@ -53,7 +67,7 @@ function ReviewPhase() {
                 <ReviewPhasePlayerScoreCard
                   key={player.playerId}
                   playerId={player.playerId}
-                  isHost={true}
+                  isMe={true}
                   playerName={player.name!}
                   playerAnswer={player.answer}
                   playerScore={player.score}
