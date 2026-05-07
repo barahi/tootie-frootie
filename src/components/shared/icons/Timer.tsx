@@ -2,11 +2,16 @@ import { Clock } from "lucide-react";
 import { useTimer } from "react-timer-hook";
 
 interface TimerProps {
+  color?: string | undefined;
   totalSeconds: number;
   onTimeExpire: () => void;
 }
 
-export default function Timer({ totalSeconds, onTimeExpire }: TimerProps) {
+export default function Timer({
+  color,
+  totalSeconds,
+  onTimeExpire,
+}: TimerProps) {
   const time = new Date();
   time.setSeconds(time.getSeconds() + totalSeconds);
   const { minutes, seconds } = useTimer({
@@ -18,8 +23,11 @@ export default function Timer({ totalSeconds, onTimeExpire }: TimerProps) {
 
   return (
     <div className="flex flex-row gap-2 mt-1 ml-1">
-      <Clock color="#ED254E" size={20} />
-      <span className="font-normal tracking-wide text-md text-red-50">
+      <Clock color={color !== "" ? color : "#ED254E"} size={20} />
+      <span
+        style={{ color: color !== "" ? color : "#ED254E" }}
+        className="font-normal tracking-wide text-md"
+      >
         {formatTime(minutes)}:{formatTime(seconds)}
       </span>
     </div>

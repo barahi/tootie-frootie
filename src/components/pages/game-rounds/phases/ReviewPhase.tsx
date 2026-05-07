@@ -30,6 +30,11 @@ function ReviewPhase() {
     console.log(`Flagging answer from ${playerName}: ${playerAnswer}`);
   };
 
+  const submitVoteDecision = (username: string, decision: boolean) => {
+    // TO DO: add function
+    console.log(username + ` ${decision ? "approved" : "invalidated"}`);
+  };
+
   return (
     <Layout phaseName="Review Phase">
       {flagScreenVisible && (
@@ -37,9 +42,12 @@ function ReviewPhase() {
           category={category}
           player={playerAnswers[0].name!}
           answerToReview={playerAnswers[0].answer}
+          submitVoteDecision={(username, decision) =>
+            submitVoteDecision(username, decision)
+          }
+          isReviewed={false}
         />
       )}
-
       <div className="flex flex-row justify-center w-full">
         <div className="flex flex-col w-[80%] max-w-3xl bg-white border-none rounded-xl p-6 gap-2">
           <div className="flex flex-row gap-1">
