@@ -6,6 +6,10 @@ interface VoteAnswerCardProps {
   answerToReview: string;
   submitVoteDecision: (username: string, decision: boolean) => void;
   isReviewed: boolean;
+  results?: {
+    acceptedVotes: number;
+    rejectedVotes: number;
+  };
 }
 
 export default function VoteAnswerCard({
@@ -14,18 +18,26 @@ export default function VoteAnswerCard({
   answerToReview,
   submitVoteDecision,
   isReviewed,
+  results,
 }: VoteAnswerCardProps) {
   const username = sessionStorage.getItem("username");
+  let wasApproved = false;
+  if (results !== undefined) {
+    wasApproved = results.acceptedVotes > results.rejectedVotes;
+  }
+  console.log("was approved " + wasApproved);
   return (
     <div className="fixed top-0 left-0 z-50 flex flex-col items-center justify-center w-full h-full bg-black bg-opacity-50">
       <div className="flex flex-col w-full max-w-sm gap-4 p-6 bg-white rounded-xl">
         <div className="flex flex-row items-center justify-between gap-2">
           <p className="font-medium tracking-wide text-md">Review Answer</p>
-          <Timer
-            color={isReviewed ? "#01040ca5" : ""}
-            totalSeconds={30}
-            onTimeExpire={() => {}}
-          />
+          {!isReviewed && (
+            <Timer
+              color={isReviewed ? "#01040ca5" : ""}
+              totalSeconds={30}
+              onTimeExpire={() => {}}
+            />
+          )}
         </div>
         <div className="flex flex-col gap-4">
           <div className="flex flex-row justify-start w-full gap-[40%]">
@@ -81,19 +93,27 @@ export default function VoteAnswerCard({
             </div>
           </div>
         </div>
-        {isReviewed && (
+        {isReviewed && results !== undefined && (
           <div className="flex flex-col items-center justify-center">
             <div className="flex flex-row w-full gap-2 pt-4 mt-1 border-t border-gray-90">
-              <div className="flex flex-col items-center justify-center w-full gap-[2px] p-[0.75rem] rounded-lg bg-blue-50">
+              <div
+                className={`${wasApproved ? "bg-blue-50" : "bg-gray-50"} flex flex-col items-center justify-center w-full gap-[2px] p-[0.75rem] rounded-lg`}
+              >
                 <p className="text-sm font-light">Accepted</p>
-                <p className="text-sm font-semibold">5</p>
+                <p className="text-sm font-semibold">{results.acceptedVotes}</p>
               </div>
-              <div className="flex flex-col items-center justify-center w-full gap-[2px] p-[0.75rem] rounded-lg bg-gray-50">
+              <div
+                className={` ${wasApproved ? "bg-gray-50" : "bg-red-50"} flex flex-col items-center justify-center w-full gap-[2px] p-[0.75rem] rounded-lg`}
+              >
                 <p className="text-sm font-light">Invalidated</p>
-                <p className="text-sm font-semibold">2</p>
+                <p className="text-sm font-semibold">{results.rejectedVotes}</p>
               </div>
             </div>
-            <span className="w-full p-1 mt-4 font-light text-center text-md">{`${player}'s answer was invalidated`}</span>
+            <span
+              className={`${wasApproved ? "bg-blue-90" : "bg-red-90"} rounded-lg p-1 w-full p-1 mt-4 font-md text-center text-md text-white`}
+            >
+              {`${player}'s answer was ${wasApproved ? "approved" : "invalidated"}`}
+            </span>
           </div>
         )}
       </div>

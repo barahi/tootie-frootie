@@ -26,13 +26,25 @@ function ReviewPhase() {
     playerAnswer: string,
   ) => {
     setFlagScreenVisible(true);
-    // Implementation for flagging an answer
+    // TO DO:  add function to flag answer to backend and trigger voting
     console.log(`Flagging answer from ${playerName}: ${playerAnswer}`);
   };
 
+  let alreadyVoted = false;
   const submitVoteDecision = (username: string, decision: boolean) => {
-    // TO DO: add function
+    if (alreadyVoted) {
+      alert("Already voted");
+      return;
+    }
+    alreadyVoted = true;
+    // TO DO: add function to submit results to backend
     console.log(username + ` ${decision ? "approved" : "invalidated"}`);
+  };
+
+  // TO DO: fetch results from backend
+  const results = {
+    acceptedVotes: 3,
+    rejectedVotes: 5,
   };
 
   return (
@@ -45,7 +57,8 @@ function ReviewPhase() {
           submitVoteDecision={(username, decision) =>
             submitVoteDecision(username, decision)
           }
-          isReviewed={false}
+          isReviewed={true}
+          results={results}
         />
       )}
       <div className="flex flex-row justify-center w-full">
@@ -57,7 +70,6 @@ function ReviewPhase() {
             </p>
           </div>
           <div className="w-full grid gap-y-[1rem] gap-x-[4rem] grid-cols-2">
-            {/* answers per player and score */}
             {playerAnswers.map((player) =>
               player.name !== currUsername ? (
                 <ReviewPhasePlayerScoreCard
