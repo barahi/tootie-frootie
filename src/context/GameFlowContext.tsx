@@ -2,6 +2,7 @@ import { createContext, useContext, useState } from "react";
 
 // define the params in game context state
 export interface GameFlowParams {
+  hostPlayerId: string;
   numberOfPlayers: number;
   numberOfRounds: number;
   numberOfCategories: number;
@@ -14,6 +15,7 @@ export interface GameFlowParams {
 }
 
 export const initialConfig: GameFlowParams = {
+  hostPlayerId: "",
   numberOfPlayers: 2,
   numberOfRounds: 3,
   numberOfCategories: 5,

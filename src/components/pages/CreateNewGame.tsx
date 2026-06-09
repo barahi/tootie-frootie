@@ -54,16 +54,17 @@ function CreateNewGame() {
       language: "english",
       password: passwordRequirement ? password : "",
     };
-    const request = await createRoom(roomData);
-    if (request.id !== null) {
-      sessionStorage.setItem("roomId", request.id);
-      gameConfig.categories = request.categories;
-      gameConfig.numberOfRounds = request.numberOfRounds;
-      gameConfig.letters = request.excludedLetters;
-      gameConfig.numberOfPlayers = request.maxPlayers;
-      gameConfig.password = request.password;
-      console.log("Game created with id: " + request.id);
-      navigate(`/game-lobby/${request.id}`);
+    const response = await createRoom(roomData);
+    if (response.id !== null) {
+      sessionStorage.setItem("roomId", response.id);
+      gameConfig.hostPlayerId = userId;
+      gameConfig.categories = response.categories;
+      gameConfig.numberOfRounds = response.numberOfRounds;
+      gameConfig.letters = response.excludedLetters;
+      gameConfig.numberOfPlayers = response.maxPlayers;
+      gameConfig.password = response.password;
+      console.log("Game created with id: " + response.id);
+      navigate(`/game-lobby/${response.id}`);
     } else {
       navigate("/");
       return;

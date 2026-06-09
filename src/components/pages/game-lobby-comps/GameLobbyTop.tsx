@@ -6,7 +6,7 @@ type GameConfigurationProps = {
     numberOfRounds: number;
     letters: string[];
     numberOfPlayers: number;
-    password: string;
+    password?: string | "";
   };
 };
 

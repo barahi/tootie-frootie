@@ -6,24 +6,44 @@ import { Navigate } from "react-router-dom";
 import GameLobbyTop from "./game-lobby-comps/GameLobbyTop";
 import GameLobbyBottom from "./game-lobby-comps/GameLobbyBottom";
 import BinaryActionScreenMessage from "../shared/messages/BinaryActionScreenMessage";
+import { useGameSocket } from "../../sockets/useGameSocket";
 
 function GameLobby() {
   const { setIsInitialized, gameConfig } = useGameSetup();
-  const { roomId } = useParams<{ roomId: string }>();
   const navigate = useNavigate();
   const [totalScreenMessage, setTotalScreenMessage] = useState<boolean>(false);
+  const { roomId } = useParams<{ roomId: string }>();
+  const playerId = sessionStorage.getItem("id") || "";
 
-  if (!roomId) {
+  const { connection, players, settings } = useGameSocket(
+    playerId,
+    roomId || "",
+    gameConfig.password || "",
+  );
+
+  if (!playerId || !roomId) {
     return <Navigate to="/join-game/room" replace />;
   }
 
-  const gameParameters = {
-    categories: gameConfig.categories || [],
-    numberOfRounds: gameConfig.numberOfRounds || 2,
-    letters: gameConfig.letters || [],
-    numberOfPlayers: gameConfig.numberOfPlayers || 1,
-    password: gameConfig.password || "",
+  const gameParams = {
+    hostPlayerId: settings?.hostPlayerId || gameConfig.hostPlayerId,
+    categories: settings?.categories || gameConfig.categories,
+    roundDuration: settings?.roundDuration || gameConfig.timeLimit,
+    numberOfRounds: settings?.numberOfRounds || gameConfig.numberOfRounds,
+    letters: settings?.excludedLetters || gameConfig.letters,
+    numberOfPlayers: settings?.maxPlayers || gameConfig.numberOfPlayers,
+    password: settings?.password || gameConfig.password,
   };
+
+  if (connection && !settings) {
+    return (
+      <Layout>
+        <div className="flex items-center justify-center h-screen font-light tracking-wide text-gray-400 animate-pulse">
+          Synchronizing lobby parameters...
+        </div>
+      </Layout>
+    );
+  }
 
   const handleTotalScreenMessage = () => {
     setTotalScreenMessage(true);
@@ -55,13 +75,15 @@ function GameLobby() {
           <p className="p-2 pl-4 pr-4 text-lg font-thin tracking-wider border-none bg-gray-50 opacity-80 rounded-xl">
             Game Lobby
           </p>
-          <GameLobbyTop gameParams={gameParameters} />
+          <GameLobbyTop gameParams={gameParams} />
           <GameLobbyBottom
-            password={gameParameters.password}
-            numberOfPlayers={gameParameters.numberOfPlayers}
+            password={gameParams.password || ""}
+            numberOfPlayers={gameParams.numberOfPlayers}
             roomCode={roomId!}
             handleNext={handleTotalScreenMessage}
             exitGame={exitGame}
+            players={players}
+            hostPlayerId={gameParams.hostPlayerId}
           />
         </div>
       </div>

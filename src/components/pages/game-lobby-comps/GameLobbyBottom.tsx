@@ -2,6 +2,7 @@ import { User } from "lucide-react";
 import PlayerInfoTag from "../../shared/tags/PlayerInfoTag";
 import CopyTag from "../../shared/tags/CopyTag";
 import PlainColoredButton from "../../shared/buttons/PlainColoredButton";
+import { Player } from "../../../sockets/types";
 
 type GameLobbyBottomProps = {
   password: string;
@@ -9,6 +10,8 @@ type GameLobbyBottomProps = {
   roomCode: string;
   handleNext: () => void;
   exitGame: () => void;
+  players: Player[];
+  hostPlayerId: string;
 };
 
 function GameLobbyBottom({
@@ -17,10 +20,10 @@ function GameLobbyBottom({
   roomCode,
   handleNext,
   exitGame,
+  players,
+  hostPlayerId,
 }: GameLobbyBottomProps) {
-  // TO DO: Get number of players in lobby from backend
   const currPlayerNum = 1;
-  const username = sessionStorage.getItem("username");
   return (
     <div className="flex flex-row w-full h-full gap-4">
       {/* Part 2: Player list area */}
@@ -35,10 +38,23 @@ function GameLobbyBottom({
         </div>
         {/* player tags */}
         <div className="flex flex-col w-full gap-2">
-          <PlayerInfoTag number={1} name={username || "?"} isHost={true} />
-          {Array.from({ length: numberOfPlayers - 1 }).map((_, idx) => (
-            <PlayerInfoTag key={idx} number={idx + 2} isHost={false} />
+          {players.map((player, idx) => (
+            <PlayerInfoTag
+              key={player.id}
+              number={idx + 1}
+              name={player.username}
+              isHost={player.id === hostPlayerId}
+            />
           ))}
+
+          {Array.from({
+            length: Math.max(0, numberOfPlayers - players.length),
+          }).map((_, idx) => {
+            const placeholderNumber = players.length + idx + 1;
+            return (
+              <PlayerInfoTag key={`empty-${idx}`} number={placeholderNumber} />
+            );
+          })}
         </div>
       </div>
       <div className="flex flex-col w-[45%] gap-6">

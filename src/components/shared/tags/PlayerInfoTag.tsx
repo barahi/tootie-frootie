@@ -11,34 +11,40 @@ const PlayerInfoTag = ({
   isHost = false,
   className = "",
 }: PlayerInfoTagProps) => {
+  if (name === null || name === undefined) {
+    return (
+      <div className="flex flex-row items-center gap-2 px-2 py-2 border-dashed rounded-lg border-gray-90 border-1">
+        <p className="text-sm text-gray-90">{`#${number}`}</p>
+        <div className="flex items-center justify-center w-5 h-5 text-xs text-white border-none rounded-full bg-gray-90">
+          ?
+        </div>
+        <p className="text-xs italic font-light tracking-wide text-gray-99">
+          Waiting for player...
+        </p>
+      </div>
+    );
+  }
+
   return (
-    <>
-      {name === null || name === undefined ? (
-        <div className="flex flex-row items-center gap-2 px-2 py-2 border-dashed rounded-lg border-gray-90 border-1">
-          <p className="text-sm text-gray-90">{`#${number}`}</p>
-          <p className="text-xs text-center bg-gray-90 text-white border-none rounded-full px-[2.2%] py-[2px]">
-            ?
-          </p>
-        </div>
-      ) : (
-        <div
-          className={`${className} relative flex flex-row items-center gap-3 px-2 py-2 border-gray-90 border-1 rounded-lg bg-honeydew-90`}
-        >
-          <p className="text-sm text-gray-90">{`#${number}`}</p>
-          <p className="text-xs text-center bg-blue-90 text-white border-none rounded-full px-[2.2%] py-[2px]">
-            {name.slice(0, 1).toUpperCase()}
-          </p>
-          <p className="text-[clamp(0.8rem,1.2vw,1rem)] font-thin tracking-wider text-gray-99">
-            {name}
-          </p>
-          {isHost && (
-            <p className="text-[clamp(6px,1vw,10px)] tracking-wider font-thin border-red-50 border-1 rounded-2xl px-2 py-[1px] bg-red-10 text-red-90 absolute right-3">
-              Admin
-            </p>
-          )}
-        </div>
+    <div
+      className={`${className} relative flex flex-row items-center gap-3 px-2 py-2 border-gray-90 border-1 rounded-lg bg-honeydew-90`}
+    >
+      <p className="text-sm text-gray-90">{`#${number}`}</p>
+
+      <div className="flex items-center justify-center w-5 h-5 text-xs font-medium text-white border-none rounded-full bg-blue-90">
+        {name.slice(0, 1).toUpperCase()}
+      </div>
+
+      <p className="text-[clamp(0.8rem,1.2vw,1rem)] font-thin tracking-wider text-gray-99">
+        {name}
+      </p>
+
+      {isHost && (
+        <p className="text-[clamp(6px,1vw,10px)] tracking-wider font-thin border-red-50 border-1 rounded-2xl px-2 py-[1px] bg-red-10 text-red-90 absolute right-3">
+          Admin
+        </p>
       )}
-    </>
+    </div>
   );
 };
 export default PlayerInfoTag;
