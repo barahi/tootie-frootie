@@ -15,6 +15,8 @@ export function useGameSocket(
   const [players, setPlayers] = useState<Player[]>([]);
   const [settings, setSettings] = useState<RoomSettings | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [startRoundData, setStartRoundData] =
+    useState<StartRoundPayload | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -58,13 +60,7 @@ export function useGameSocket(
 
           case "START_ROUND":
             const startRoundPayload = eventData.payload as StartRoundPayload;
-            console.log(
-              "got letter: " +
-                startRoundPayload.roundLetter +
-                " and round number " +
-                startRoundPayload.roundNumber,
-            );
-            navigate(`/submit/${roomId}`);
+            setStartRoundData(startRoundPayload);
             break;
 
           case "TIME_UP":
@@ -97,15 +93,19 @@ export function useGameSocket(
         socket.close();
       }
     };
-  }, [playerId, roomId, roomPassword, shouldConnect]);
+  }, [playerId, roomId, roomPassword, shouldConnect, navigate]);
 
   const sendMessage = useCallback((type: string, payload?: any) => {
     if (ws.current && ws.current.readyState === WebSocket.OPEN) {
-      const messageLoad = { type: payload };
+      const messageLoad: any = { type: type };
+
+      if (payload !== undefined) {
+        messageLoad.payload = payload;
+      }
       console.log("sending socket message: " + messageLoad);
       ws.current.send(JSON.stringify(messageLoad));
     } else {
-      console.error("Socket not open, cannot send message");
+      console.error("Socket not open, cannot send message " + type);
     }
   }, []);
 
@@ -113,5 +113,13 @@ export function useGameSocket(
     setError(null);
   }, []);
 
-  return { connection, players, settings, sendMessage, error, clearError };
+  return {
+    connection,
+    players,
+    settings,
+    sendMessage,
+    error,
+    clearError,
+    startRoundData,
+  };
 }

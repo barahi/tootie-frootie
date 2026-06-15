@@ -1,5 +1,5 @@
 import Layout from "../shared/Layout";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useGameSetup } from "../../context/GameFlowContext";
 import { useNavigate, useParams } from "react-router-dom";
 import { Navigate } from "react-router-dom";
@@ -15,11 +15,24 @@ function GameLobby() {
   const { roomId } = useParams<{ roomId: string }>();
   const playerId = sessionStorage.getItem("id") || "";
 
-  const { connection, players, settings, sendMessage } = useGameSocket(
-    playerId,
-    roomId || "",
-    gameConfig.password !== "" ? gameConfig.password : undefined,
-  );
+  const { connection, players, settings, sendMessage, startRoundData } =
+    useGameSocket(
+      playerId,
+      roomId || "",
+      gameConfig.password !== "" ? gameConfig.password : undefined,
+    );
+
+  useEffect(() => {
+    if (startRoundData) {
+      setIsInitialized(true);
+      navigate(`/submit/${roomId}`, {
+        state: {
+          roundLetter: startRoundData.letterForRound,
+          roundNumber: startRoundData.roundNumber,
+        },
+      });
+    }
+  }, [startRoundData, setIsInitialized, navigate, roomId]);
 
   if (!playerId || !roomId) {
     return <Navigate to="/join-game/room" replace />;
@@ -58,7 +71,6 @@ function GameLobby() {
   };
 
   const handleNext = () => {
-    setIsInitialized(true);
     console.log("Setting is initialized to true, navigating to submit phase");
     sendMessage("START_ROUND");
     setTotalScreenMessage(false);

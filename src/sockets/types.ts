@@ -27,7 +27,7 @@ export interface RoomSettings {
 }
 
 export interface StartRoundPayload {
-  roundLetter: string;
+  letterForRound: string;
   roundNumber: number;
 }
 

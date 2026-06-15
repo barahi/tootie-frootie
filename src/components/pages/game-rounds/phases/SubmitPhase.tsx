@@ -5,10 +5,11 @@ import PlayerInfoTag from "../../../shared/tags/PlayerInfoTag";
 import { CategoryInput } from "../../../shared/user-input/basic-label-input/CategoryInput";
 import PlainColoredButton from "../../../shared/buttons/PlainColoredButton";
 import Timer from "../../../shared/icons/Timer";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 function SubmitPhase() {
   const navigate = useNavigate();
+  const location = useLocation();
   const queryParams = new URLSearchParams(window.location.search);
   const { isInitialized, gameConfig } = useGameSetup();
 
@@ -18,13 +19,15 @@ function SubmitPhase() {
     }
   }, [isInitialized, navigate]);
 
+  const { roundLetter, roundNumber } = location.state;
+
   const [answersAllowed, setAnswersAllowed] = useState<boolean>(true);
   const totalRounds = gameConfig.numberOfRounds;
   const categories = gameConfig.categories;
   const timeLimit = gameConfig.timeLimit;
 
   // TO DO: Replace with actual player data from backend
-  let currRound = 1;
+
   const players = [
     { id: 1, name: "Bon" },
     { id: 2, name: "Bonney" },
@@ -62,7 +65,7 @@ function SubmitPhase() {
   };
 
   return (
-    <Layout phaseName={`Round ${currRound}/${totalRounds} `}>
+    <Layout phaseName={`Round ${roundNumber}/${totalRounds} `}>
       <div className="flex flex-row w-full items-start justify-center gap-[2%]">
         {/* LeaderBoard Part */}
         <div className="flex flex-col w-[20%] bg-white border-none rounded-xl p-4">
@@ -90,7 +93,7 @@ function SubmitPhase() {
                   All answers must start with the letter
                 </p>
                 <span className="px-[10px] py-[5px] rounded-xl font-md text-md bg-gray-50">
-                  A
+                  {roundLetter}
                 </span>
               </div>
             </div>
