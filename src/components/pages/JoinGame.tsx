@@ -13,21 +13,38 @@ function JoinGame() {
   const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const userId = sessionStorage.getItem("id")!;
-  const [isConnecting, setIsConnecting] = useState<boolean>(false);
   const { setGameConfig } = useGameSetup();
-  const { connection, settings } = useGameSocket(
+
+  const [isConnecting, setIsConnecting] = useState<boolean>(false);
+  const userId = sessionStorage.getItem("id")!;
+
+  const { error, clearError, settings } = useGameSocket(
     userId,
-    isConnecting ? roomId : "",
-    isConnecting ? password : "",
+    isConnecting ? roomId.trim() : "",
+    isConnecting && password.trim() !== "" ? password.trim() : undefined,
+    isConnecting,
   );
 
   useEffect(() => {
-    if (isConnecting && connection && settings) {
+    if (isConnecting && settings) {
+      setGameConfig((prev) => ({
+        ...prev,
+        roomId: roomId.trim(),
+        passwordRequirement: password.trim() !== "",
+        password: password.trim() !== "" ? password.trim() : "",
+      }));
       setIsConnecting(false);
-      navigate(`/game-lobby/${roomId}`);
+      navigate(`/game-lobby/${roomId.trim()}`);
     }
-  }, [connection, settings, isConnecting, roomId, password, navigate]);
+  }, [settings, isConnecting, roomId, password, navigate, setGameConfig]);
+
+  useEffect(() => {
+    if (error) {
+      console.log("socket hook error state:", error);
+      setErrorMessage(error);
+      setIsConnecting(false);
+    }
+  }, [error]);
 
   const handleNext = () => {
     if (roomId.trim() === "") {
@@ -35,22 +52,11 @@ function JoinGame() {
       return;
     }
     setErrorMessage("");
-    setGameConfig((prev) => ({
-      ...prev,
-      password: password,
-    }));
+    clearError();
     setIsConnecting(true);
-
-    setTimeout(() => {
-      if (!settings) {
-        setErrorMessage(
-          "Failed to join the game. Please check the Room ID and password, and try again.",
-        );
-        setIsConnecting(false);
-      }
-    }, 2000);
   };
 
+  const activeDisplayError = errorMessage || error || "";
   return (
     <div className="relative w-full h-screen">
       <div className="absolute top-0 left-0 z-10 w-full">
@@ -77,7 +83,7 @@ function JoinGame() {
               className=" focus:ring-gray-50"
             />
           </div>
-          <ErrorMessage message={errorMessage} />
+          <ErrorMessage message={activeDisplayError} />
           <PlainColoredButton buttonTitle="Join" nextFunction={handleNext} />
         </div>
       </div>

@@ -26,6 +26,11 @@ export interface RoomSettings {
   isGameStarted: boolean;
 }
 
+export interface StartRoundPayload {
+  roundLetter: string;
+  roundNumber: number;
+}
+
 export interface WebSocketEvent<EventPayload = any> {
   type: SocketEventTypes;
   payload: EventPayload;

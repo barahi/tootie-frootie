@@ -23,7 +23,6 @@ function GameLobbyBottom({
   players,
   hostPlayerId,
 }: GameLobbyBottomProps) {
-  const currPlayerNum = 1;
   return (
     <div className="flex flex-row w-full h-full gap-4">
       {/* Part 2: Player list area */}
@@ -34,7 +33,7 @@ function GameLobbyBottom({
             <User className="w-5" />
             <p className="text-sm text-base font-thin tracking-wide">Players</p>
           </div>
-          <p className="px-3 py-1 text-sm font-thin tracking-widest border-none rounded-lg bg-honeydew-50">{`${currPlayerNum}/${numberOfPlayers}`}</p>
+          <p className="px-3 py-1 text-sm font-thin tracking-widest border-none rounded-lg bg-honeydew-50">{`${players.length}/${numberOfPlayers}`}</p>
         </div>
         {/* player tags */}
         <div className="flex flex-col w-full gap-2">

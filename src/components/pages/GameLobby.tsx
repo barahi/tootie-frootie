@@ -15,10 +15,10 @@ function GameLobby() {
   const { roomId } = useParams<{ roomId: string }>();
   const playerId = sessionStorage.getItem("id") || "";
 
-  const { connection, players, settings } = useGameSocket(
+  const { connection, players, settings, sendMessage } = useGameSocket(
     playerId,
     roomId || "",
-    gameConfig.password || "",
+    gameConfig.password !== "" ? gameConfig.password : undefined,
   );
 
   if (!playerId || !roomId) {
@@ -33,6 +33,14 @@ function GameLobby() {
     letters: settings?.excludedLetters || gameConfig.letters,
     numberOfPlayers: settings?.maxPlayers || gameConfig.numberOfPlayers,
     password: settings?.password || gameConfig.password,
+  };
+
+  const lobbyTopParams = {
+    categories: gameParams.categories,
+    numberOfRounds: gameParams.numberOfRounds,
+    letters: gameParams.letters,
+    numberOfPlayers: gameParams.numberOfPlayers,
+    password: gameParams.password,
   };
 
   if (connection && !settings) {
@@ -52,7 +60,8 @@ function GameLobby() {
   const handleNext = () => {
     setIsInitialized(true);
     console.log("Setting is initialized to true, navigating to submit phase");
-    navigate(`/submit/${roomId}`);
+    sendMessage("START_ROUND");
+    setTotalScreenMessage(false);
   };
 
   const exitGame = () => {
@@ -75,7 +84,7 @@ function GameLobby() {
           <p className="p-2 pl-4 pr-4 text-lg font-thin tracking-wider border-none bg-gray-50 opacity-80 rounded-xl">
             Game Lobby
           </p>
-          <GameLobbyTop gameParams={gameParams} />
+          <GameLobbyTop gameParams={lobbyTopParams} />
           <GameLobbyBottom
             password={gameParams.password || ""}
             numberOfPlayers={gameParams.numberOfPlayers}
