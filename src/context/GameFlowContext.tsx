@@ -15,23 +15,9 @@ export interface GameFlowParams {
   letters: string[];
 }
 
-export const initialConfig: GameFlowParams = {
-  roomId: "",
-  hostPlayerId: "",
-  numberOfPlayers: 2,
-  numberOfRounds: 3,
-  numberOfCategories: 5,
-  categories: [],
-  timeLimit: 60,
-  passwordRequirement: false,
-  password: "",
-  letterExclusion: false,
-  letters: [],
-};
-
 interface GameFlowState {
-  gameConfig: GameFlowParams;
-  setGameConfig: React.Dispatch<React.SetStateAction<GameFlowParams>>;
+  gameConfig: GameFlowParams | null;
+  setGameConfig: React.Dispatch<React.SetStateAction<GameFlowParams | null>>;
   isInitialized: boolean;
   setIsInitialized: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -39,7 +25,7 @@ interface GameFlowState {
 const GameFlowContext = createContext<GameFlowState | undefined>(undefined);
 
 export function GameSetupProvider({ children }: { children: React.ReactNode }) {
-  const [gameConfig, setGameConfig] = useState<GameFlowParams>(initialConfig);
+  const [gameConfig, setGameConfig] = useState<GameFlowParams | null>(null);
   const [isInitialized, setIsInitialized] = useState<boolean>(false);
 
   return (

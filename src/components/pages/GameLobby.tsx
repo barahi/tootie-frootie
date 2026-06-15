@@ -2,30 +2,31 @@ import Layout from "../shared/Layout";
 import { useEffect, useState } from "react";
 import { useGameSetup } from "../../context/GameFlowContext";
 import { useNavigate, useParams } from "react-router-dom";
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import GameLobbyTop from "./game-lobby-comps/GameLobbyTop";
 import GameLobbyBottom from "./game-lobby-comps/GameLobbyBottom";
 import BinaryActionScreenMessage from "../shared/messages/BinaryActionScreenMessage";
 import { useGameSocket } from "../../sockets/useGameSocket";
 
 function GameLobby() {
-  const { setIsInitialized, gameConfig } = useGameSetup();
+  const { setIsInitialized } = useGameSetup();
   const navigate = useNavigate();
   const [totalScreenMessage, setTotalScreenMessage] = useState<boolean>(false);
   const { roomId } = useParams<{ roomId: string }>();
-  const playerId = sessionStorage.getItem("id") || "";
+  const playerId = sessionStorage.getItem("id");
+  const location = useLocation();
+  const incomingPassword = location.state?.roomPassword;
 
-  const { connection, players, settings, sendMessage, startRoundData } =
-    useGameSocket(
-      playerId,
-      roomId || "",
-      gameConfig.password !== "" ? gameConfig.password : undefined,
-    );
+  const { players, settings, sendMessage, startRoundData } = useGameSocket(
+    playerId!,
+    roomId || "",
+    incomingPassword,
+  );
 
   useEffect(() => {
     if (startRoundData) {
       setIsInitialized(true);
-      navigate(`/submit/${roomId}`, {
+      navigate(`/submit/${roomId!}`, {
         state: {
           roundLetter: startRoundData.letterForRound,
           roundNumber: startRoundData.roundNumber,
@@ -38,33 +39,23 @@ function GameLobby() {
     return <Navigate to="/join-game/room" replace />;
   }
 
-  const gameParams = {
-    hostPlayerId: settings?.hostPlayerId || gameConfig.hostPlayerId,
-    categories: settings?.categories || gameConfig.categories,
-    roundDuration: settings?.roundDuration || gameConfig.timeLimit,
-    numberOfRounds: settings?.numberOfRounds || gameConfig.numberOfRounds,
-    letters: settings?.excludedLetters || gameConfig.letters,
-    numberOfPlayers: settings?.maxPlayers || gameConfig.numberOfPlayers,
-    password: settings?.password || gameConfig.password,
-  };
-
-  const lobbyTopParams = {
-    categories: gameParams.categories,
-    numberOfRounds: gameParams.numberOfRounds,
-    letters: gameParams.letters,
-    numberOfPlayers: gameParams.numberOfPlayers,
-    password: gameParams.password,
-  };
-
-  if (connection && !settings) {
+  if (!settings) {
     return (
       <Layout>
         <div className="flex items-center justify-center h-screen font-light tracking-wide text-gray-400 animate-pulse">
-          Synchronizing lobby parameters...
+          Synchronizing lobby parameters with server...
         </div>
       </Layout>
     );
   }
+
+  const lobbyTopParams = {
+    categories: settings.categories,
+    numberOfRounds: settings.numberOfRounds,
+    letters: settings.excludedLetters,
+    numberOfPlayers: settings.maxPlayers,
+    password: settings.password,
+  };
 
   const handleTotalScreenMessage = () => {
     setTotalScreenMessage(true);
@@ -98,13 +89,13 @@ function GameLobby() {
           </p>
           <GameLobbyTop gameParams={lobbyTopParams} />
           <GameLobbyBottom
-            password={gameParams.password || ""}
-            numberOfPlayers={gameParams.numberOfPlayers}
+            password={settings.password || ""}
+            numberOfPlayers={settings.maxPlayers}
             roomCode={roomId!}
             handleNext={handleTotalScreenMessage}
             exitGame={exitGame}
             players={players}
-            hostPlayerId={gameParams.hostPlayerId}
+            hostPlayerId={settings.hostPlayerId}
           />
         </div>
       </div>

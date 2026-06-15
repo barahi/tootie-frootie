@@ -1,51 +1,50 @@
-import Layout from "../PhaseLayout";
 import { useEffect, useState } from "react";
-import { useGameSetup } from "../../../../context/GameFlowContext";
 import PlayerInfoTag from "../../../shared/tags/PlayerInfoTag";
 import { CategoryInput } from "../../../shared/user-input/basic-label-input/CategoryInput";
 import PlainColoredButton from "../../../shared/buttons/PlainColoredButton";
 import Timer from "../../../shared/icons/Timer";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useGameSocket } from "../../../../sockets/useGameSocket";
+import PhaseLayout from "../PhaseLayout";
 
 function SubmitPhase() {
   const navigate = useNavigate();
   const location = useLocation();
-  const queryParams = new URLSearchParams(window.location.search);
-  const { isInitialized, gameConfig } = useGameSetup();
-
-  useEffect(() => {
-    if (!isInitialized) {
-      navigate("/");
-    }
-  }, [isInitialized, navigate]);
-
-  const { roundLetter, roundNumber } = location.state;
+  const { roomId } = useParams<{ roomId: string }>();
+  const playerId = sessionStorage.getItem("id")!;
 
   const [answersAllowed, setAnswersAllowed] = useState<boolean>(true);
-  const totalRounds = gameConfig.numberOfRounds;
-  const categories = gameConfig.categories;
-  const timeLimit = gameConfig.timeLimit;
-
-  // TO DO: Replace with actual player data from backend
-
-  const players = [
-    { id: 1, name: "Bon" },
-    { id: 2, name: "Bonney" },
-    { id: 3, name: "Vivi" },
-    { id: 4, name: "Marco" },
-    { id: 5, name: "Karoo" },
-    { id: 6, name: "Ivan" },
-    { id: 7, name: "Imu" },
-  ];
-  //
-
   const [categoryAnswers, setCategoryAnswers] = useState<Map<string, string>>(
-    () => {
-      const initialMap = new Map<string, string>();
-      categories.forEach((cat) => initialMap.set(cat, ""));
-      return initialMap;
-    },
+    new Map(),
   );
+
+  const { players, settings } = useGameSocket(playerId, roomId!);
+  const { roundLetter, roundNumber } = location.state;
+
+  useEffect(() => {
+    const serverCategories = settings?.categories;
+    if (
+      serverCategories &&
+      serverCategories.length > 0 &&
+      categoryAnswers.size === 0
+    ) {
+      const initialMap = new Map<string, string>();
+      serverCategories.forEach((cat: string) => initialMap.set(cat, ""));
+      setCategoryAnswers(initialMap);
+    }
+  }, [settings, categoryAnswers.size]);
+
+  if (!settings) {
+    return (
+      <div className="flex items-center justify-center h-screen font-light text-gray-400 animate-pulse">
+        Synchronizing active round parameters...
+      </div>
+    );
+  }
+
+  const totalRounds = settings.numberOfRounds;
+  const categories = settings.categories || [];
+  const timeLimit = settings.roundDuration;
 
   const addCategoryAnswer = (category: string, answer: string) => {
     if (!answersAllowed) return;
@@ -56,26 +55,22 @@ function SubmitPhase() {
     });
   };
 
-  // TO DO: Add function to submit categoryAnswers from playerId and round number to backend
-
   const changeRound = () => {
-    //TO DO: Call backend to make sure we can move to next round.
-    const roomId = queryParams.get("roomId");
     navigate(`/review/${roomId}`);
   };
 
   return (
-    <Layout phaseName={`Round ${roundNumber}/${totalRounds} `}>
+    <PhaseLayout phaseName={`Round ${roundNumber}/${totalRounds} `}>
       <div className="flex flex-row w-full items-start justify-center gap-[2%]">
         {/* LeaderBoard Part */}
         <div className="flex flex-col w-[20%] bg-white border-none rounded-xl p-4">
           <p className="mb-2 text-sm font-thin tracking-wide"> Leaderboard</p>
           <div className="flex flex-col w-full gap-2">
-            {players.map((p) => (
+            {players.map((p, idx) => (
               <PlayerInfoTag
                 key={p.id}
-                number={p.id}
-                name={p.name}
+                number={idx + 1}
+                name={p.username}
                 className="border-none`"
               />
             ))}
@@ -127,7 +122,7 @@ function SubmitPhase() {
           </div>
         </div>
       </div>
-    </Layout>
+    </PhaseLayout>
   );
 }
 

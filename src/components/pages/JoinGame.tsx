@@ -5,58 +5,38 @@ import { ErrorMessage } from "../shared/messages/ErrorMessage";
 import PlainColoredButton from "../shared/buttons/PlainColoredButton";
 import Header from "../shared/bars/Header";
 import { PasswordInput } from "../shared/user-input/passwordInput/PasswordInput";
-import { useGameSocket } from "../../sockets/useGameSocket";
-import { useGameSetup } from "../../context/GameFlowContext";
 
 function JoinGame() {
   const [roomId, setRoomId] = useState<string>("");
   const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const { setGameConfig } = useGameSetup();
-
-  const [isConnecting, setIsConnecting] = useState<boolean>(false);
-  const userId = sessionStorage.getItem("id")!;
-
-  const { error, clearError, settings } = useGameSocket(
-    userId,
-    isConnecting ? roomId.trim() : "",
-    isConnecting && password.trim() !== "" ? password.trim() : undefined,
-    isConnecting,
-  );
-
-  useEffect(() => {
-    if (isConnecting && settings) {
-      setGameConfig((prev) => ({
-        ...prev,
-        roomId: roomId.trim(),
-        passwordRequirement: password.trim() !== "",
-        password: password.trim() !== "" ? password.trim() : "",
-      }));
-      setIsConnecting(false);
-      navigate(`/game-lobby/${roomId.trim()}`);
-    }
-  }, [settings, isConnecting, roomId, password, navigate, setGameConfig]);
-
-  useEffect(() => {
-    if (error) {
-      console.log("socket hook error state:", error);
-      setErrorMessage(error);
-      setIsConnecting(false);
-    }
-  }, [error]);
-
   const handleNext = () => {
-    if (roomId.trim() === "") {
+    const cleanRoomId = roomId.trim();
+
+    if (cleanRoomId === "") {
       setErrorMessage("Please enter a Room ID to join a game");
       return;
     }
+
+    const userId = sessionStorage.getItem("id");
+    if (!userId) {
+      setErrorMessage(
+        "Player identity missing. Please go back and choose a nickname.",
+      );
+      return;
+    }
+
     setErrorMessage("");
-    clearError();
-    setIsConnecting(true);
+    sessionStorage.setItem("roomId", cleanRoomId);
+
+    navigate(`/game-lobby/${cleanRoomId}`, {
+      state: {
+        roomPassword: password.trim() !== "" ? password.trim() : undefined,
+      },
+    });
   };
 
-  const activeDisplayError = errorMessage || error || "";
   return (
     <div className="relative w-full h-screen">
       <div className="absolute top-0 left-0 z-10 w-full">
@@ -83,7 +63,7 @@ function JoinGame() {
               className=" focus:ring-gray-50"
             />
           </div>
-          <ErrorMessage message={activeDisplayError} />
+          <ErrorMessage message={errorMessage} />
           <PlainColoredButton buttonTitle="Join" nextFunction={handleNext} />
         </div>
       </div>

@@ -42,6 +42,7 @@ function CreateNewGame() {
   const createGame = async () => {
     const userId: string = sessionStorage.getItem("id")!;
     if (!userId) {
+      navigate("/");
       return;
     }
     const roomData: RoomPayload = {
@@ -57,12 +58,6 @@ function CreateNewGame() {
     const response = await createRoom(roomData);
     if (response.id !== null) {
       sessionStorage.setItem("roomId", response.id);
-      gameConfig.hostPlayerId = userId;
-      gameConfig.categories = response.categories;
-      gameConfig.numberOfRounds = response.numberOfRounds;
-      gameConfig.letters = response.excludedLetters;
-      gameConfig.numberOfPlayers = response.maxPlayers;
-      gameConfig.password = response.password;
       console.log("Game created with id: " + response.id);
       navigate(`/game-lobby/${response.id}`);
     } else {
