@@ -35,3 +35,9 @@ export interface WebSocketEvent<EventPayload = any> {
   type: SocketEventTypes;
   payload: EventPayload;
 }
+
+export interface SubmitAnswerPayload {
+  roundNumber: number;
+  playerId: string;
+  roundAnswers: Map<String, String>;
+}
