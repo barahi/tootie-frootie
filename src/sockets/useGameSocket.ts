@@ -17,6 +17,8 @@ export function useGameSocket(
   const [error, setError] = useState<string | null>(null);
   const [startRoundData, setStartRoundData] =
     useState<StartRoundPayload | null>(null);
+  const [isTimeUp, setIsTimeUp] = useState<boolean>(false);
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -64,7 +66,7 @@ export function useGameSocket(
             break;
 
           case "TIME_UP":
-            //TODO: Stop players from changing or adding answers and make up json body of answers
+            setIsTimeUp(true);
             break;
 
           case "SUBMIT_ANSWERS":
@@ -121,5 +123,6 @@ export function useGameSocket(
     error,
     clearError,
     startRoundData,
+    isTimeUp,
   };
 }

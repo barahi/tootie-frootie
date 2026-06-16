@@ -35,7 +35,7 @@ export const CategoryInput = ({
         value={input}
         disabled={!canAddInput}
         onChange={(e) => addInput(e)}
-        className="text-base font-light pt-0.5 pb-0.5 pl-1 pr-1 bg-honeydew-90 border-solid border-gray-90 border-1 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-50"
+        className={`${canAddInput ? "bg-honeydew-90 text-black-90 border-gray-90" : "bg-gray-50 text-gray-90 border-gray-50"} text-base font-light pt-0.5 pb-0.5 pl-1 pr-1 border-solid border-1 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-50`}
       ></input>
     </div>
   );

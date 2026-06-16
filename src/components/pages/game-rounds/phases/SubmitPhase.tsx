@@ -18,8 +18,15 @@ function SubmitPhase() {
     new Map(),
   );
 
-  const { players, settings } = useGameSocket(playerId, roomId!);
+  const { players, settings, isTimeUp } = useGameSocket(playerId, roomId!);
   const { roundLetter, roundNumber } = location.state;
+
+  useEffect(() => {
+    if (isTimeUp) {
+      console.log("Time's up!");
+      setAnswersAllowed(false);
+    }
+  }, [isTimeUp]);
 
   useEffect(() => {
     const serverCategories = settings?.categories;
@@ -88,7 +95,7 @@ function SubmitPhase() {
                   All answers must start with the letter
                 </p>
                 <span className="px-[10px] py-[5px] rounded-xl font-md text-md bg-gray-50">
-                  {roundLetter}
+                  {roundLetter.toUpperCase()}
                 </span>
               </div>
             </div>
