@@ -3,7 +3,6 @@ import NewGameFinal from "./new-game/NewGameFinal";
 import NewGameInitial from "./new-game/NewGameInitial";
 import { RoomPayload, createRoom } from "../../rest/room";
 import { useNavigate } from "react-router-dom";
-import { useGameSetup } from "../../context/GameFlowContext";
 
 enum CreatePhase {
   INITIAL,
@@ -16,7 +15,6 @@ const DEFAULT_CATEGORY_COUNT = 2;
 const DEFAULT_TIME_LIMIT = 30;
 
 function CreateNewGame() {
-  const { gameConfig } = useGameSetup();
   const [playerCount, setPlayerCount] = useState<number>(DEFAULT_PLAYER_COUNT);
   const [numberOfRounds, setNumberOfRounds] = useState<number>(
     DEFAULT_NUM_OF_ROUNDS,
@@ -25,13 +23,13 @@ function CreateNewGame() {
     DEFAULT_CATEGORY_COUNT,
   );
   const [categories, setCategories] = useState<Array<string>>([]);
-  const [timeLimit, setTimeLimit] = useState<number>(DEFAULT_TIME_LIMIT);
+  const [roundDuration, setRoundDuration] =
+    useState<number>(DEFAULT_TIME_LIMIT);
   const [passwordRequirement, setPasswordRequirement] =
     useState<boolean>(false);
   const [password, setPassword] = useState<string>("");
   const [letterExclusion, setLetterExclusion] = useState<boolean>(false);
   const [letters, setLetters] = useState<Array<string>>([]);
-
   const [phase, setPhase] = useState<CreatePhase>(CreatePhase.INITIAL);
   const navigate = useNavigate();
 
@@ -48,7 +46,7 @@ function CreateNewGame() {
     const roomData: RoomPayload = {
       hostPlayerId: userId,
       maxPlayers: playerCount,
-      roundDuration: timeLimit,
+      roundDuration: Number(roundDuration),
       numberOfRounds: numberOfRounds,
       categories: categories,
       excludedLetters: letterExclusion ? letters : [],
@@ -57,8 +55,8 @@ function CreateNewGame() {
     };
     const response = await createRoom(roomData);
     if (response.id !== null) {
-      sessionStorage.setItem("roomId", response.id);
       console.log("Game created with id: " + response.id);
+      sessionStorage.setItem("roomId", response.id);
       navigate(`/game-lobby/${response.id}`);
     } else {
       navigate("/");
@@ -76,8 +74,8 @@ function CreateNewGame() {
           setNumberOfRounds={setNumberOfRounds}
           categoryCount={categoryCount}
           setCategoryCount={setCategoryCount}
-          timeLimit={timeLimit}
-          setTimeLimit={setTimeLimit}
+          roundDuration={roundDuration}
+          setRoundDuration={setRoundDuration}
           passwordRequirement={passwordRequirement}
           setPasswordRequirement={setPasswordRequirement}
           password={password}

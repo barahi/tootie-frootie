@@ -1,6 +1,6 @@
 import Layout from "../PhaseLayout";
 
-function VotePhase() {
+function VotePhase({ gameData }: any) {
   return (
     <Layout phaseName="Vote Phase">
       <div>{/* content goes here */}</div>

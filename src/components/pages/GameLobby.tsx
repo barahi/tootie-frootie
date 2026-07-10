@@ -2,31 +2,24 @@ import Layout from "../shared/Layout";
 import { useEffect, useState } from "react";
 import { useGameSetup } from "../../context/GameFlowContext";
 import { useNavigate, useParams } from "react-router-dom";
-import { Navigate, useLocation } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import GameLobbyTop from "./game-lobby-comps/GameLobbyTop";
 import GameLobbyBottom from "./game-lobby-comps/GameLobbyBottom";
 import BinaryActionScreenMessage from "../shared/messages/BinaryActionScreenMessage";
-import { useGameSocket } from "../../sockets/useGameSocket";
 
 function GameLobby() {
-  const { setIsInitialized } = useGameSetup();
   const navigate = useNavigate();
   const [totalScreenMessage, setTotalScreenMessage] = useState<boolean>(false);
   const { roomId } = useParams<{ roomId: string }>();
   const playerId = sessionStorage.getItem("id");
-  const location = useLocation();
-  const incomingPassword = location.state?.roomPassword;
 
-  const { players, settings, sendMessage, startRoundData } = useGameSocket(
-    playerId!,
-    roomId || "",
-    incomingPassword,
-  );
+  const { players, settings, sendMessage, startRoundData, setIsInitialized } =
+    useGameSetup();
 
   useEffect(() => {
     if (startRoundData) {
       setIsInitialized(true);
-      navigate(`/submit/${roomId!}`, {
+      navigate(`/game/${roomId!}`, {
         state: {
           roundLetter: startRoundData.letterForRound,
           roundNumber: startRoundData.roundNumber,
@@ -36,7 +29,7 @@ function GameLobby() {
   }, [startRoundData, setIsInitialized, navigate, roomId]);
 
   if (!playerId || !roomId) {
-    return <Navigate to="/join-game/room" replace />;
+    return <Navigate to="/join-game/" replace />;
   }
 
   if (!settings) {
@@ -62,7 +55,6 @@ function GameLobby() {
   };
 
   const handleNext = () => {
-    console.log("Setting is initialized to true, navigating to submit phase");
     sendMessage("START_ROUND");
     setTotalScreenMessage(false);
   };

@@ -16,8 +16,8 @@ function NewGameInitial({
   setNumberOfRounds,
   categoryCount,
   setCategoryCount,
-  timeLimit,
-  setTimeLimit,
+  roundDuration,
+  setRoundDuration,
   passwordRequirement,
   setPasswordRequirement,
   password,
@@ -35,8 +35,8 @@ function NewGameInitial({
   setNumberOfRounds: Dispatch<SetStateAction<number>>;
   categoryCount: number;
   setCategoryCount: Dispatch<SetStateAction<number>>;
-  timeLimit: number;
-  setTimeLimit: Dispatch<SetStateAction<number>>;
+  roundDuration: number;
+  setRoundDuration: Dispatch<SetStateAction<number>>;
   passwordRequirement: boolean;
   setPasswordRequirement: Dispatch<SetStateAction<boolean>>;
   password: string;
@@ -94,9 +94,9 @@ function NewGameInitial({
                 onSelect={setNumberOfRounds}
               />
               <DropdownSelect
-                selectItems={timeIntervals.map((i) => i + " s")}
+                selectItems={timeIntervals}
                 title="Maximum time per round"
-                onSelect={setTimeLimit}
+                onSelect={setRoundDuration}
               />
               <div className="flex flex-col gap-4">
                 <div className="flex flex-row justify-between">

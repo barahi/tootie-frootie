@@ -11,7 +11,7 @@ export default function ProtectedRoute({
 
   const playerId = sessionStorage.getItem("id");
 
-  if (!playerId) {
+  if (!playerId || gameConfig === null) {
     return <Navigate to="" replace />;
   }
 

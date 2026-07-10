@@ -1,6 +1,10 @@
 import { useEffect, useRef, useState, useCallback } from "react";
-import { Player, RoomSettings, StartRoundPayload } from "./types";
-import { useNavigate } from "react-router-dom";
+import {
+  Player,
+  RoomSettings,
+  RoundScoresPayload,
+  StartRoundPayload,
+} from "./types";
 
 const SOCKET_BASE_URL = "ws://localhost:8081/ws/tootiefrootie/";
 
@@ -18,8 +22,9 @@ export function useGameSocket(
   const [startRoundData, setStartRoundData] =
     useState<StartRoundPayload | null>(null);
   const [isTimeUp, setIsTimeUp] = useState<boolean>(false);
-
-  const navigate = useNavigate();
+  const [roundScores, setRoundScores] = useState<RoundScoresPayload | null>(
+    null,
+  );
 
   useEffect(() => {
     if (!shouldConnect || !playerId || !roomId) return;
@@ -69,8 +74,12 @@ export function useGameSocket(
             setIsTimeUp(true);
             break;
 
-          case "SUBMIT_ANSWERS":
-            //TODO: Send over round answers
+          case "ROUND_SCORES":
+            const roundScoresPayload = eventData.payload as RoundScoresPayload;
+            console.log(
+              "got round scores payload: " + JSON.stringify(roundScoresPayload),
+            );
+            setRoundScores(roundScoresPayload);
             break;
         }
       } catch (error) {
@@ -78,8 +87,10 @@ export function useGameSocket(
       }
     };
 
-    socket.onclose = () => {
-      console.log("web socket connection closed");
+    socket.onclose = (event) => {
+      console.log(
+        `Web socket connection closed. Code: ${event.code}, Reason: ${event.reason}`,
+      );
       setConnection(false);
     };
 
@@ -95,7 +106,7 @@ export function useGameSocket(
         socket.close();
       }
     };
-  }, [playerId, roomId, roomPassword, shouldConnect, navigate]);
+  }, [playerId, roomId, roomPassword, shouldConnect]);
 
   const sendMessage = useCallback((type: string, payload?: any) => {
     if (ws.current && ws.current.readyState === WebSocket.OPEN) {
@@ -104,7 +115,7 @@ export function useGameSocket(
       if (payload !== undefined) {
         messageLoad.payload = payload;
       }
-      console.log("sending socket message: " + messageLoad);
+      console.log("sending socket message: " + JSON.stringify(messageLoad));
       ws.current.send(JSON.stringify(messageLoad));
     } else {
       console.error("Socket not open, cannot send message " + type);
@@ -113,6 +124,11 @@ export function useGameSocket(
 
   const clearError = useCallback(() => {
     setError(null);
+  }, []);
+
+  const resetRoundState = useCallback(() => {
+    setStartRoundData(null);
+    setIsTimeUp(false);
   }, []);
 
   return {
@@ -124,5 +140,7 @@ export function useGameSocket(
     clearError,
     startRoundData,
     isTimeUp,
+    roundScores,
+    resetRoundState,
   };
 }

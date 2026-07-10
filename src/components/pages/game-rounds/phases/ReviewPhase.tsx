@@ -3,8 +3,12 @@ import { useState } from "react";
 import ReviewPhasePlayerScoreCard from "../../../shared/tags/ReviewPhasePlayerScoreCard";
 import PlainColoredButton from "../../../shared/buttons/PlainColoredButton";
 import VoteAnswerCard from "../../../shared/cards/VoteAnswerCard";
+import {
+  ReviewRoundScore,
+  CategoryReviewRoundCompilation,
+} from "../../../../sockets/types";
 
-function ReviewPhase() {
+function ReviewPhase({ gameData }: { gameData: any }) {
   const currUsername = sessionStorage.getItem("username");
   const [flagScreenVisible, setFlagScreenVisible] = useState<boolean>(false);
   // TO DO: Replace with actual category and player answers from backend
@@ -20,11 +24,27 @@ function ReviewPhase() {
   ];
   //
 
-  const flagAnswer = (
-    playerId: number,
-    playerName: string,
-    playerAnswer: string,
-  ) => {
+  const roundScores = gameData.roundScores;
+  const roundScoreMap = roundScores?.roundScoreMap || {};
+
+  const formattedRoundScoreData: CategoryReviewRoundCompilation[] =
+    Object.entries(roundScoreMap).map(
+      ([category, playerAnswerFull]: [string, any]) => {
+        const results: ReviewRoundScore[] = Object.entries(
+          playerAnswerFull,
+        ).map(([username, answerToPoints]: [string, any]) => ({
+          username: username,
+          answer: answerToPoints.answer || "No Answer",
+          points: answerToPoints.points || 0,
+        }));
+        return {
+          category: category,
+          playerAnswers: results,
+        };
+      },
+    );
+
+  const flagAnswer = (playerName: string, playerAnswer: string) => {
     setFlagScreenVisible(true);
     // TO DO:  add function to flag answer to backend and trigger voting
     console.log(`Flagging answer from ${playerName}: ${playerAnswer}`);
@@ -70,31 +90,31 @@ function ReviewPhase() {
             </p>
           </div>
           <div className="w-full grid gap-y-[1rem] gap-x-[4rem] grid-cols-2">
-            {playerAnswers.map((player) =>
-              player.name !== currUsername ? (
-                <ReviewPhasePlayerScoreCard
-                  key={player.playerId}
-                  playerId={player.playerId}
-                  isMe={false}
-                  playerName={player.name!}
-                  playerAnswer={player.answer}
-                  playerScore={player.score}
-                  flaggingFunction={() =>
-                    flagAnswer(player.playerId, player.name!, player.answer)
-                  }
-                />
-              ) : (
-                <ReviewPhasePlayerScoreCard
-                  key={player.playerId}
-                  playerId={player.playerId}
-                  isMe={true}
-                  playerName={player.name!}
-                  playerAnswer={player.answer}
-                  playerScore={player.score}
-                  flaggingFunction={() =>
-                    flagAnswer(player.playerId, player.name!, player.answer)
-                  }
-                />
+            {formattedRoundScoreData.map((data) =>
+              data.playerAnswers.map((player: any) =>
+                player.username !== currUsername ? (
+                  <ReviewPhasePlayerScoreCard
+                    key={player.username}
+                    isMe={false}
+                    playerName={player.username!}
+                    playerAnswer={player.answer}
+                    playerScore={player.points}
+                    flaggingFunction={() =>
+                      flagAnswer(player.username, player.answer)
+                    }
+                  />
+                ) : (
+                  <ReviewPhasePlayerScoreCard
+                    key={player.username}
+                    isMe={true}
+                    playerName={player.username!}
+                    playerAnswer={player.answer}
+                    playerScore={player.points}
+                    flaggingFunction={() =>
+                      flagAnswer(player.username, player.answer)
+                    }
+                  />
+                ),
               ),
             )}
             <PlainColoredButton

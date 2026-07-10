@@ -14,6 +14,7 @@ export default function LoadingAnimation({
   children,
 }: LoadingAnimationProps) {
   const [timeExpired, setTimeExpired] = useState<boolean>(false);
+
   useEffect(() => {
     const timer = setTimeout(() => {
       setTimeExpired(true);

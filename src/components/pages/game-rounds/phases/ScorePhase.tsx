@@ -1,5 +1,6 @@
 import Layout from "../PhaseLayout";
-function SubmitPhase() {
+
+function ScorePhase({ gameData }: any) {
   return (
     <Layout phaseName="Score Phase">
       <div>{/* content goes here */}</div>
@@ -7,4 +8,4 @@ function SubmitPhase() {
   );
 }
 
-export default SubmitPhase;
+export default ScorePhase;

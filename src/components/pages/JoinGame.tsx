@@ -1,16 +1,20 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { LabelInput } from "../shared/user-input/basic-label-input/LabelInput";
 import { ErrorMessage } from "../shared/messages/ErrorMessage";
 import PlainColoredButton from "../shared/buttons/PlainColoredButton";
 import Header from "../shared/bars/Header";
 import { PasswordInput } from "../shared/user-input/passwordInput/PasswordInput";
+import { useGameSetup } from "../../context/GameFlowContext";
 
 function JoinGame() {
   const [roomId, setRoomId] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
   const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
+
+  const { setGameConfig } = useGameSetup();
+
   const handleNext = () => {
     const cleanRoomId = roomId.trim();
 
@@ -30,11 +34,21 @@ function JoinGame() {
     setErrorMessage("");
     sessionStorage.setItem("roomId", cleanRoomId);
 
-    navigate(`/game-lobby/${cleanRoomId}`, {
-      state: {
-        roomPassword: password.trim() !== "" ? password.trim() : undefined,
-      },
+    setGameConfig({
+      roomId: cleanRoomId,
+      password: password.trim(),
+      hostPlayerId: "",
+      numberOfPlayers: 0,
+      numberOfRounds: 0,
+      numberOfCategories: 0,
+      categories: [],
+      timeLimit: 0,
+      passwordRequirement: password.trim() !== "",
+      letterExclusion: false,
+      letters: [],
     });
+
+    navigate(`/game-lobby/${cleanRoomId}`);
   };
 
   return (

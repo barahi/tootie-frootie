@@ -36,8 +36,18 @@ export interface WebSocketEvent<EventPayload = any> {
   payload: EventPayload;
 }
 
-export interface SubmitAnswerPayload {
+export interface RoundScoresPayload {
   roundNumber: number;
-  playerId: string;
-  roundAnswers: Map<String, String>;
+  roundScoreMap: Map<string, number>;
+}
+
+export interface ReviewRoundScore {
+  username: string;
+  answer: string;
+  points: number;
+}
+
+export interface CategoryReviewRoundCompilation {
+  category: string;
+  playerAnswers: ReviewRoundScore[];
 }

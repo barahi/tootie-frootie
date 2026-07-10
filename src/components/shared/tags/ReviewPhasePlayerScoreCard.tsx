@@ -1,20 +1,14 @@
 import { Megaphone } from "lucide-react";
 
 interface ReviewPhasePlayerScoreCardProps {
-  playerId: number;
   isMe: boolean;
   playerName: string;
   playerScore: number;
   playerAnswer: string;
-  flaggingFunction: (
-    playerId: number,
-    playerName: string,
-    playerAnswer: string,
-  ) => void;
+  flaggingFunction: (playerName: string, playerAnswer: string) => void;
 }
 
 export default function ReviewPhasePlayerScoreCard({
-  playerId,
   isMe,
   playerName,
   playerScore,
@@ -51,7 +45,7 @@ export default function ReviewPhasePlayerScoreCard({
         <button
           disabled={isMe}
           className={`${isMe ? "" : "hover:bg-red-50"} flex flex-row items-center justify-center w-full gap-1 p-1 text-xs font-normal text-center border-none rounded-lg bg-gray-50 text-gray-99`}
-          onClick={() => flaggingFunction(playerId, playerName, playerAnswer)}
+          onClick={() => flaggingFunction(playerName, playerAnswer)}
         >
           <Megaphone size="clamp(0.8rem,1.2vw,1rem)" /> Flag
         </button>

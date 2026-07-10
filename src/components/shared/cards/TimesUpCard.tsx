@@ -8,6 +8,7 @@ interface TimesUpCardProps {
 
 export default function TimesUpCard({ showCard, children }: TimesUpCardProps) {
   const [displayView, setDisplayView] = useState<boolean>(false);
+
   useEffect(() => {
     if (showCard) {
       setDisplayView(true);
