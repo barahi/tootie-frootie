@@ -4,8 +4,13 @@ interface VoteAnswerCardProps {
   category: string;
   player: string;
   answerToReview: string;
-  submitVoteDecision: (username: string, decision: boolean) => void;
+  submitVoteDecision: (
+    username: string,
+    decision: boolean,
+    votingAllowed: boolean,
+  ) => void;
   isReviewed: boolean;
+  setIsReviewed: React.Dispatch<React.SetStateAction<boolean>>;
   results?: {
     acceptedVotes: number;
     rejectedVotes: number;
@@ -25,7 +30,6 @@ export default function VoteAnswerCard({
   if (results !== undefined) {
     wasApproved = results.acceptedVotes > results.rejectedVotes;
   }
-  console.log("was approved " + wasApproved);
   return (
     <div className="fixed top-0 left-0 z-50 flex flex-col items-center justify-center w-full h-full bg-black bg-opacity-50">
       <div className="flex flex-col w-full max-w-sm gap-4 p-6 bg-white rounded-xl">
@@ -79,13 +83,13 @@ export default function VoteAnswerCard({
             </div>
             <div className="flex flex-row justify-between gap-4 mt-2 i items-centerw-full">
               <button
-                onClick={() => submitVoteDecision(username!, true)}
+                onClick={() => submitVoteDecision(username!, true, isReviewed)}
                 className={` ${isReviewed ? "bg-gray-90" : "bg-blue-90 hover:bg-blue-50"} w-full px-1 py-2 text-white rounded-lg`}
               >
                 Approve
               </button>
               <button
-                onClick={() => submitVoteDecision(username!, false)}
+                onClick={() => submitVoteDecision(username!, false, isReviewed)}
                 className={` ${isReviewed ? "bg-gray-90" : "bg-red-90 hover:bg-red-50"} w-full px-1 py-2 text-white rounded-lg`}
               >
                 Invalidate

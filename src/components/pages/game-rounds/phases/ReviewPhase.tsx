@@ -11,18 +11,10 @@ import {
 function ReviewPhase({ gameData }: { gameData: any }) {
   const currUsername = sessionStorage.getItem("username");
   const [flagScreenVisible, setFlagScreenVisible] = useState<boolean>(false);
-  // TO DO: Replace with actual category and player answers from backend
-  const category = "Animal";
-  const playerAnswers = [
-    { playerId: 1, name: currUsername, answer: "Bear", score: 100 },
-    { playerId: 2, name: "Bonney", answer: "Bee", score: 50 },
-    { playerId: 3, name: "Vivi", answer: "Bee", score: 50 },
-    { playerId: 4, name: "Marco", answer: "Beaver", score: 33 },
-    { playerId: 5, name: "Karoo", answer: "", score: 0 },
-    { playerId: 6, name: "Ivan", answer: "Beaver", score: 33 },
-    { playerId: 7, name: "Imu", answer: "Beaver", score: 33 },
-  ];
-  //
+  const [categoryIdx, setCategoryIdx] = useState<number>(0);
+  const [votingAllowed, setVotingAllowed] = useState<boolean>(true);
+
+  const { sendMessage } = gameData;
 
   const roundScores = gameData.roundScores;
   const roundScoreMap = roundScores?.roundScoreMap || {};
@@ -44,19 +36,36 @@ function ReviewPhase({ gameData }: { gameData: any }) {
       },
     );
 
+  const currentCategoryData = formattedRoundScoreData[categoryIdx];
+  const isLastCategory = categoryIdx === formattedRoundScoreData.length - 1;
+
+  const handleNextCategory = () => {
+    if (!isLastCategory) {
+      setCategoryIdx(categoryIdx + 1);
+      setFlagScreenVisible(false);
+    } else {
+      console.log("End of categories");
+    }
+  };
+
   const flagAnswer = (playerName: string, playerAnswer: string) => {
+    const payload = {
+      category: currentCategoryData.category,
+      targetedPlayer: playerName,
+      triggeredByPlayer: currUsername,
+      answer: playerAnswer,
+    };
+    console.log(JSON.stringify(payload));
+    sendMessage("BEGIN_VOTE_PHASE", payload);
     setFlagScreenVisible(true);
-    // TO DO:  add function to flag answer to backend and trigger voting
     console.log(`Flagging answer from ${playerName}: ${playerAnswer}`);
   };
 
-  let alreadyVoted = false;
   const submitVoteDecision = (username: string, decision: boolean) => {
-    if (alreadyVoted) {
+    if (!votingAllowed) {
       alert("Already voted");
       return;
     }
-    alreadyVoted = true;
     // TO DO: add function to submit results to backend
     console.log(username + ` ${decision ? "approved" : "invalidated"}`);
   };
@@ -69,59 +78,54 @@ function ReviewPhase({ gameData }: { gameData: any }) {
 
   return (
     <Layout phaseName="Review Phase">
-      {flagScreenVisible && (
-        <VoteAnswerCard
-          category={category}
-          player={playerAnswers[0].name!}
-          answerToReview={playerAnswers[0].answer}
-          submitVoteDecision={(username, decision) =>
-            submitVoteDecision(username, decision)
-          }
-          isReviewed={true}
-          results={results}
-        />
-      )}
-      <div className="flex flex-row justify-center w-full">
-        <div className="flex flex-col w-[80%] max-w-3xl bg-white border-none rounded-xl p-6 gap-2">
-          <div className="flex flex-row gap-1">
-            <p className="mb-2 text-sm font-thin tracking-wide">Category:</p>
-            <p className="mb-2 text-sm font-semibold tracking-wide">
-              {category}
-            </p>
-          </div>
-          <div className="w-full grid gap-y-[1rem] gap-x-[4rem] grid-cols-2">
-            {formattedRoundScoreData.map((data) =>
-              data.playerAnswers.map((player: any) =>
-                player.username !== currUsername ? (
-                  <ReviewPhasePlayerScoreCard
-                    key={player.username}
-                    isMe={false}
-                    playerName={player.username!}
-                    playerAnswer={player.answer}
-                    playerScore={player.points}
-                    flaggingFunction={() =>
-                      flagAnswer(player.username, player.answer)
-                    }
-                  />
-                ) : (
-                  <ReviewPhasePlayerScoreCard
-                    key={player.username}
-                    isMe={true}
-                    playerName={player.username!}
-                    playerAnswer={player.answer}
-                    playerScore={player.points}
-                    flaggingFunction={() =>
-                      flagAnswer(player.username, player.answer)
-                    }
-                  />
-                ),
-              ),
-            )}
-            <PlainColoredButton
-              buttonTitle="Review next category"
-              nextFunction={() => console.log("Next category")}
-              className="w-full h-[2rem] mt-2"
-            />
+      <div>
+        {flagScreenVisible && currentCategoryData.playerAnswers.length > 0 && (
+          <VoteAnswerCard
+            category={currentCategoryData.category}
+            player={currentCategoryData.playerAnswers[0].username}
+            answerToReview={currentCategoryData.playerAnswers[0].answer}
+            submitVoteDecision={(username, decision) =>
+              submitVoteDecision(username, decision)
+            }
+            isReviewed={votingAllowed}
+            setIsReviewed={setVotingAllowed}
+            results={results}
+          />
+        )}
+
+        <div className="flex flex-row justify-center w-full">
+          <div className="flex flex-col w-[80%] max-w-3xl bg-white border-none rounded-xl p-6 gap-2">
+            <div className="flex flex-row gap-1">
+              <p className="mb-2 text-sm font-thin tracking-wide">Category:</p>
+              <p className="mb-2 text-sm font-semibold tracking-wide">
+                {currentCategoryData.category}
+              </p>
+            </div>
+
+            <div className="w-full grid gap-y-[1rem] gap-x-[4rem] grid-cols-2">
+              {currentCategoryData.playerAnswers.map((player) => (
+                <ReviewPhasePlayerScoreCard
+                  key={player.username}
+                  isMe={player.username === currUsername}
+                  playerName={player.username}
+                  playerAnswer={player.answer}
+                  playerScore={player.points}
+                  flaggingFunction={() =>
+                    flagAnswer(player.username, player.answer)
+                  }
+                />
+              ))}
+
+              <div className="flex justify-end col-span-2 mt-4">
+                <PlainColoredButton
+                  buttonTitle={
+                    isLastCategory ? "Finish Review" : "Review next category"
+                  }
+                  nextFunction={handleNextCategory}
+                  className="w-full h-[2rem]"
+                />
+              </div>
+            </div>
           </div>
         </div>
       </div>
