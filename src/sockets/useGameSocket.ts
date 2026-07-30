@@ -4,6 +4,7 @@ import {
   RoomSettings,
   RoundScoresPayload,
   StartRoundPayload,
+  FlaggedAnswerPayload,
 } from "./types";
 
 const SOCKET_BASE_URL = "ws://localhost:8081/ws/tootiefrootie/";
@@ -25,6 +26,7 @@ export function useGameSocket(
   const [roundScores, setRoundScores] = useState<RoundScoresPayload | null>(
     null,
   );
+  const [flaggedAnswer, setFlaggedAnswer] = useState<any | null>(null);
 
   useEffect(() => {
     if (!shouldConnect || !playerId || !roomId) return;
@@ -81,6 +83,16 @@ export function useGameSocket(
             );
             setRoundScores(roundScoresPayload);
             break;
+
+          case "FLAGGED_ANSWER":
+            const flaggedAnswerPayload =
+              eventData.payload as FlaggedAnswerPayload;
+            console.log(
+              "got flagged answer payload: " +
+                JSON.stringify(flaggedAnswerPayload),
+            );
+            setFlaggedAnswer(flaggedAnswerPayload);
+            break;
         }
       } catch (error) {
         console.error("Error parsing web socket message: ", error);
@@ -131,6 +143,10 @@ export function useGameSocket(
     setIsTimeUp(false);
   }, []);
 
+  const resetFlaggedAnswer = useCallback(() => {
+    setFlaggedAnswer(null);
+  }, []);
+
   return {
     connection,
     players,
@@ -142,5 +158,7 @@ export function useGameSocket(
     isTimeUp,
     roundScores,
     resetRoundState,
+    flaggedAnswer,
+    resetFlaggedAnswer,
   };
 }

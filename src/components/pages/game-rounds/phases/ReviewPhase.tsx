@@ -1,5 +1,5 @@
 import Layout from "../PhaseLayout";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ReviewPhasePlayerScoreCard from "../../../shared/tags/ReviewPhasePlayerScoreCard";
 import PlainColoredButton from "../../../shared/buttons/PlainColoredButton";
 import VoteAnswerCard from "../../../shared/cards/VoteAnswerCard";
@@ -7,14 +7,19 @@ import {
   ReviewRoundScore,
   CategoryReviewRoundCompilation,
 } from "../../../../sockets/types";
+import { useGameSocket } from "../../../../sockets/useGameSocket";
 
-function ReviewPhase({ gameData }: { gameData: any }) {
+type ReviewPhaseProps = {
+  gameData: ReturnType<typeof useGameSocket>;
+};
+
+function ReviewPhase({ gameData }: ReviewPhaseProps) {
   const currUsername = sessionStorage.getItem("username");
   const [flagScreenVisible, setFlagScreenVisible] = useState<boolean>(false);
   const [categoryIdx, setCategoryIdx] = useState<number>(0);
   const [votingAllowed, setVotingAllowed] = useState<boolean>(true);
 
-  const { sendMessage } = gameData;
+  const { sendMessage, flaggedAnswer, resetFlaggedAnswer } = gameData;
 
   const roundScores = gameData.roundScores;
   const roundScoreMap = roundScores?.roundScoreMap || {};
@@ -57,9 +62,15 @@ function ReviewPhase({ gameData }: { gameData: any }) {
     };
     console.log(JSON.stringify(payload));
     sendMessage("BEGIN_VOTE_PHASE", payload);
-    setFlagScreenVisible(true);
-    console.log(`Flagging answer from ${playerName}: ${playerAnswer}`);
   };
+
+  useEffect(() => {
+    if (flaggedAnswer) {
+      console.log("Flagged answer received: ", flaggedAnswer);
+      setFlagScreenVisible(true);
+      resetFlaggedAnswer();
+    }
+  }, [flaggedAnswer, resetFlaggedAnswer]);
 
   const submitVoteDecision = (username: string, decision: boolean) => {
     if (!votingAllowed) {
@@ -79,11 +90,12 @@ function ReviewPhase({ gameData }: { gameData: any }) {
   return (
     <Layout phaseName="Review Phase">
       <div>
-        {flagScreenVisible && currentCategoryData.playerAnswers.length > 0 && (
+        {flagScreenVisible && flaggedAnswer && (
           <VoteAnswerCard
-            category={currentCategoryData.category}
-            player={currentCategoryData.playerAnswers[0].username}
-            answerToReview={currentCategoryData.playerAnswers[0].answer}
+            category={flaggedAnswer.category}
+            targetedPlayer={flaggedAnswer.targetedPlayer}
+            triggeredByPlayer={flaggedAnswer.triggeredByPlayer}
+            answerToReview={flaggedAnswer.answer}
             submitVoteDecision={(username, decision) =>
               submitVoteDecision(username, decision)
             }

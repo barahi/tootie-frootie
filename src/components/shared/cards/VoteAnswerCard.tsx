@@ -2,7 +2,8 @@ import Timer from "../icons/Timer";
 
 interface VoteAnswerCardProps {
   category: string;
-  player: string;
+  targetedPlayer: string;
+  triggeredByPlayer: string;
   answerToReview: string;
   submitVoteDecision: (
     username: string,
@@ -19,13 +20,13 @@ interface VoteAnswerCardProps {
 
 export default function VoteAnswerCard({
   category,
-  player,
+  targetedPlayer,
+  triggeredByPlayer,
   answerToReview,
   submitVoteDecision,
   isReviewed,
   results,
 }: VoteAnswerCardProps) {
-  const username = sessionStorage.getItem("username");
   let wasApproved = false;
   if (results !== undefined) {
     wasApproved = results.acceptedVotes > results.rejectedVotes;
@@ -62,9 +63,11 @@ export default function VoteAnswerCard({
                 <p
                   className={`${isReviewed ? "bg-gray-90 text-white font-normal" : "bg-blue-50 font-normal"} p-1.5 text-xs text-center text-white border-none rounded-full`}
                 >
-                  {player.slice(0, 2).toUpperCase()}
+                  {targetedPlayer.slice(0, 2).toUpperCase()}
                 </p>
-                <p className="font-light tracking-wide text-md">{player}</p>
+                <p className="font-light tracking-wide text-md">
+                  {targetedPlayer}
+                </p>
               </div>
             </div>
           </div>
@@ -83,13 +86,17 @@ export default function VoteAnswerCard({
             </div>
             <div className="flex flex-row justify-between gap-4 mt-2 i items-centerw-full">
               <button
-                onClick={() => submitVoteDecision(username!, true, isReviewed)}
+                onClick={() =>
+                  submitVoteDecision(targetedPlayer, true, isReviewed)
+                }
                 className={` ${isReviewed ? "bg-gray-90" : "bg-blue-90 hover:bg-blue-50"} w-full px-1 py-2 text-white rounded-lg`}
               >
                 Approve
               </button>
               <button
-                onClick={() => submitVoteDecision(username!, false, isReviewed)}
+                onClick={() =>
+                  submitVoteDecision(targetedPlayer, false, isReviewed)
+                }
                 className={` ${isReviewed ? "bg-gray-90" : "bg-red-90 hover:bg-red-50"} w-full px-1 py-2 text-white rounded-lg`}
               >
                 Invalidate
@@ -116,7 +123,7 @@ export default function VoteAnswerCard({
             <span
               className={`${wasApproved ? "bg-blue-90" : "bg-red-90"} rounded-lg p-1 w-full p-1 mt-4 font-md text-center text-md text-white`}
             >
-              {`${player}'s answer was ${wasApproved ? "approved" : "invalidated"}`}
+              {`${targetedPlayer}'s answer was ${wasApproved ? "approved" : "invalidated"}`}
             </span>
           </div>
         )}

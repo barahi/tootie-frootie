@@ -51,3 +51,11 @@ export interface CategoryReviewRoundCompilation {
   category: string;
   playerAnswers: ReviewRoundScore[];
 }
+
+export interface FlaggedAnswerPayload {
+  answer: string;
+  category: string;
+  score: number;
+  targetedPlayer: string;
+  triggeredByPlayer: string;
+}
