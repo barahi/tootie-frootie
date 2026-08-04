@@ -26,7 +26,9 @@ export function useGameSocket(
   const [roundScores, setRoundScores] = useState<RoundScoresPayload | null>(
     null,
   );
-  const [flaggedAnswer, setFlaggedAnswer] = useState<any | null>(null);
+  const [votePhaseActive, setVotePhaseActive] = useState<boolean>(false);
+  const [flaggedAnswer, setFlaggedAnswer] =
+    useState<FlaggedAnswerPayload | null>(null);
 
   useEffect(() => {
     if (!shouldConnect || !playerId || !roomId) return;
@@ -92,6 +94,7 @@ export function useGameSocket(
                 JSON.stringify(flaggedAnswerPayload),
             );
             setFlaggedAnswer(flaggedAnswerPayload);
+            setVotePhaseActive(true);
             break;
         }
       } catch (error) {
@@ -144,6 +147,7 @@ export function useGameSocket(
   }, []);
 
   const resetFlaggedAnswer = useCallback(() => {
+    setVotePhaseActive(false);
     setFlaggedAnswer(null);
   }, []);
 
@@ -151,14 +155,15 @@ export function useGameSocket(
     connection,
     players,
     settings,
-    sendMessage,
     error,
-    clearError,
     startRoundData,
     isTimeUp,
     roundScores,
-    resetRoundState,
+    votePhaseActive,
     flaggedAnswer,
+    sendMessage,
+    clearError,
+    resetRoundState,
     resetFlaggedAnswer,
   };
 }

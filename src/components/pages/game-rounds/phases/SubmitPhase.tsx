@@ -42,7 +42,6 @@ function SubmitPhase({ gameData, roundNumber }: SubmitPhaseProps) {
     if (!isTimeUp || answersSubmitted.current) return;
     answersSubmitted.current = true;
     setAnswersAllowed(false);
-    console.log("times up");
 
     const roundAnswers = Object.fromEntries(categoryAnswers);
     const payload = {
@@ -50,7 +49,6 @@ function SubmitPhase({ gameData, roundNumber }: SubmitPhaseProps) {
       playerId: playerId,
       roundAnswers: roundAnswers,
     };
-    console.log("Sending: " + JSON.stringify(payload));
     sendMessage("SUBMIT_ANSWERS", payload);
   }, [isTimeUp, sendMessage, categoryAnswers, playerId, roundNumber]);
 

@@ -35,6 +35,9 @@ interface GameFlowState {
   isTimeUp: boolean;
   roundScores: any | null;
   resetRoundState: () => void;
+  votePhaseActive: boolean;
+  flaggedAnswer: any | null;
+  resetFlaggedAnswer: () => void;
 }
 
 const GameFlowContext = createContext<GameFlowState | undefined>(undefined);
@@ -97,6 +100,9 @@ export function GameSetupProvider({
         isTimeUp: socket.isTimeUp,
         roundScores: socket.roundScores,
         resetRoundState: socket.resetRoundState,
+        votePhaseActive: socket.votePhaseActive,
+        flaggedAnswer: socket.flaggedAnswer,
+        resetFlaggedAnswer: socket.resetFlaggedAnswer,
       }}
     >
       {children ? children : <Outlet />}

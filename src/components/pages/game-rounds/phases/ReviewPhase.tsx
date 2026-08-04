@@ -1,5 +1,5 @@
 import Layout from "../PhaseLayout";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import ReviewPhasePlayerScoreCard from "../../../shared/tags/ReviewPhasePlayerScoreCard";
 import PlainColoredButton from "../../../shared/buttons/PlainColoredButton";
 import VoteAnswerCard from "../../../shared/cards/VoteAnswerCard";
@@ -15,11 +15,14 @@ type ReviewPhaseProps = {
 
 function ReviewPhase({ gameData }: ReviewPhaseProps) {
   const currUsername = sessionStorage.getItem("username");
-  const [flagScreenVisible, setFlagScreenVisible] = useState<boolean>(false);
   const [categoryIdx, setCategoryIdx] = useState<number>(0);
   const [votingAllowed, setVotingAllowed] = useState<boolean>(true);
 
-  const { sendMessage, flaggedAnswer, resetFlaggedAnswer } = gameData;
+  const { sendMessage, votePhaseActive, flaggedAnswer, resetFlaggedAnswer } =
+    gameData;
+  console.log("ReviewPhase Render Check:", { votePhaseActive, flaggedAnswer });
+
+  const showVoteCard = votePhaseActive && flaggedAnswer !== null;
 
   const roundScores = gameData.roundScores;
   const roundScoreMap = roundScores?.roundScoreMap || {};
@@ -47,9 +50,9 @@ function ReviewPhase({ gameData }: ReviewPhaseProps) {
   const handleNextCategory = () => {
     if (!isLastCategory) {
       setCategoryIdx(categoryIdx + 1);
-      setFlagScreenVisible(false);
     } else {
       console.log("End of categories");
+      resetFlaggedAnswer();
     }
   };
 
@@ -60,17 +63,9 @@ function ReviewPhase({ gameData }: ReviewPhaseProps) {
       triggeredByPlayer: currUsername,
       answer: playerAnswer,
     };
-    console.log(JSON.stringify(payload));
+    console.log("flagging answer: " + JSON.stringify(payload));
     sendMessage("BEGIN_VOTE_PHASE", payload);
   };
-
-  useEffect(() => {
-    if (flaggedAnswer) {
-      console.log("Flagged answer received: ", flaggedAnswer);
-      setFlagScreenVisible(true);
-      resetFlaggedAnswer();
-    }
-  }, [flaggedAnswer, resetFlaggedAnswer]);
 
   const submitVoteDecision = (username: string, decision: boolean) => {
     if (!votingAllowed) {
@@ -90,15 +85,13 @@ function ReviewPhase({ gameData }: ReviewPhaseProps) {
   return (
     <Layout phaseName="Review Phase">
       <div>
-        {flagScreenVisible && flaggedAnswer && (
+        {showVoteCard && (
           <VoteAnswerCard
             category={flaggedAnswer.category}
             targetedPlayer={flaggedAnswer.targetedPlayer}
             triggeredByPlayer={flaggedAnswer.triggeredByPlayer}
             answerToReview={flaggedAnswer.answer}
-            submitVoteDecision={(username, decision) =>
-              submitVoteDecision(username, decision)
-            }
+            submitVoteDecision={submitVoteDecision}
             isReviewed={votingAllowed}
             setIsReviewed={setVotingAllowed}
             results={results}

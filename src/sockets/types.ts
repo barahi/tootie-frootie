@@ -53,9 +53,9 @@ export interface CategoryReviewRoundCompilation {
 }
 
 export interface FlaggedAnswerPayload {
-  answer: string;
   category: string;
-  score: number;
   targetedPlayer: string;
   triggeredByPlayer: string;
+  answer: string;
+  score: number;
 }

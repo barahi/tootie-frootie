@@ -36,6 +36,9 @@ export default function VoteAnswerCard({
       <div className="flex flex-col w-full max-w-sm gap-4 p-6 bg-white rounded-xl">
         <div className="flex flex-row items-center justify-between gap-2">
           <p className="font-medium tracking-wide text-md">Review Answer</p>
+          <p className="text-sm font-light">
+            (Flagged by: {triggeredByPlayer})
+          </p>
           {!isReviewed && (
             <Timer
               color={isReviewed ? "#01040ca5" : ""}
@@ -44,6 +47,7 @@ export default function VoteAnswerCard({
             />
           )}
         </div>
+
         <div className="flex flex-col gap-4">
           <div className="flex flex-row justify-start w-full gap-[40%]">
             <div className="flex flex-col">
