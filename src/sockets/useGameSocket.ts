@@ -5,6 +5,7 @@ import {
   RoundScoresPayload,
   StartRoundPayload,
   FlaggedAnswerPayload,
+  VoteRoundResultPayload,
 } from "./types";
 
 const SOCKET_BASE_URL = "ws://localhost:8081/ws/tootiefrootie/";
@@ -29,6 +30,9 @@ export function useGameSocket(
   const [votePhaseActive, setVotePhaseActive] = useState<boolean>(false);
   const [flaggedAnswer, setFlaggedAnswer] =
     useState<FlaggedAnswerPayload | null>(null);
+  const [voteResults, setVoteResults] = useState<VoteRoundResultPayload | null>(
+    null,
+  );
 
   useEffect(() => {
     if (!shouldConnect || !playerId || !roomId) return;
@@ -96,6 +100,15 @@ export function useGameSocket(
             setFlaggedAnswer(flaggedAnswerPayload);
             setVotePhaseActive(true);
             break;
+
+          case "VOTE_RESULTS":
+            const voteResultsPayload =
+              eventData.payload as VoteRoundResultPayload;
+            console.log(
+              "got vote results payload: " + JSON.stringify(voteResultsPayload),
+            );
+            setVoteResults(voteResultsPayload);
+            break;
         }
       } catch (error) {
         console.error("Error parsing web socket message: ", error);
@@ -151,6 +164,10 @@ export function useGameSocket(
     setFlaggedAnswer(null);
   }, []);
 
+  const resetVoteResults = useCallback(() => {
+    setVoteResults(null);
+  }, []);
+
   return {
     connection,
     players,
@@ -161,9 +178,11 @@ export function useGameSocket(
     roundScores,
     votePhaseActive,
     flaggedAnswer,
+    voteResults,
     sendMessage,
     clearError,
     resetRoundState,
     resetFlaggedAnswer,
+    resetVoteResults,
   };
 }

@@ -59,3 +59,11 @@ export interface FlaggedAnswerPayload {
   answer: string;
   score: number;
 }
+
+export interface VoteRoundResultPayload {
+  category: string;
+  roundNumber: number;
+  targetedPlayer: string;
+  validAnswerVotes: number;
+  invalidAnswerVotes: number;
+}

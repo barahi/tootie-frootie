@@ -11,11 +11,10 @@ interface VoteAnswerCardProps {
     votingAllowed: boolean,
   ) => void;
   isReviewed: boolean;
-  setIsReviewed: React.Dispatch<React.SetStateAction<boolean>>;
-  results?: {
-    acceptedVotes: number;
-    rejectedVotes: number;
-  };
+  setIsReviewed?: React.Dispatch<React.SetStateAction<boolean>>;
+  approvingVotes?: number;
+  invalidatingVotes?: number;
+  onTimeExpire: () => void;
 }
 
 export default function VoteAnswerCard({
@@ -25,11 +24,13 @@ export default function VoteAnswerCard({
   answerToReview,
   submitVoteDecision,
   isReviewed,
-  results,
+  approvingVotes,
+  invalidatingVotes,
+  onTimeExpire,
 }: VoteAnswerCardProps) {
   let wasApproved = false;
-  if (results !== undefined) {
-    wasApproved = results.acceptedVotes > results.rejectedVotes;
+  if (approvingVotes !== undefined && invalidatingVotes !== undefined) {
+    wasApproved = approvingVotes > invalidatingVotes;
   }
   return (
     <div className="fixed top-0 left-0 z-50 flex flex-col items-center justify-center w-full h-full bg-black bg-opacity-50">
@@ -42,8 +43,8 @@ export default function VoteAnswerCard({
           {!isReviewed && (
             <Timer
               color={isReviewed ? "#01040ca5" : ""}
-              totalSeconds={30}
-              onTimeExpire={() => {}}
+              totalSeconds={10}
+              onTimeExpire={onTimeExpire}
             />
           )}
         </div>
@@ -108,20 +109,20 @@ export default function VoteAnswerCard({
             </div>
           </div>
         </div>
-        {isReviewed && results !== undefined && (
+        {isReviewed && approvingVotes !== undefined && (
           <div className="flex flex-col items-center justify-center">
             <div className="flex flex-row w-full gap-2 pt-4 mt-1 border-t border-gray-90">
               <div
                 className={`${wasApproved ? "bg-blue-50" : "bg-gray-50"} flex flex-col items-center justify-center w-full gap-[2px] p-[0.75rem] rounded-lg`}
               >
                 <p className="text-sm font-light">Accepted</p>
-                <p className="text-sm font-semibold">{results.acceptedVotes}</p>
+                <p className="text-sm font-semibold">{approvingVotes}</p>
               </div>
               <div
                 className={` ${wasApproved ? "bg-gray-50" : "bg-red-50"} flex flex-col items-center justify-center w-full gap-[2px] p-[0.75rem] rounded-lg`}
               >
                 <p className="text-sm font-light">Invalidated</p>
-                <p className="text-sm font-semibold">{results.rejectedVotes}</p>
+                <p className="text-sm font-semibold">{invalidatingVotes}</p>
               </div>
             </div>
             <span

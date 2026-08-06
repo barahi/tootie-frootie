@@ -38,6 +38,8 @@ interface GameFlowState {
   votePhaseActive: boolean;
   flaggedAnswer: any | null;
   resetFlaggedAnswer: () => void;
+  voteResults: any | null;
+  resetVoteResults: () => void;
 }
 
 const GameFlowContext = createContext<GameFlowState | undefined>(undefined);
@@ -103,6 +105,8 @@ export function GameSetupProvider({
         votePhaseActive: socket.votePhaseActive,
         flaggedAnswer: socket.flaggedAnswer,
         resetFlaggedAnswer: socket.resetFlaggedAnswer,
+        voteResults: socket.voteResults,
+        resetVoteResults: socket.resetVoteResults,
       }}
     >
       {children ? children : <Outlet />}

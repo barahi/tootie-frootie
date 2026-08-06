@@ -16,11 +16,16 @@ type ReviewPhaseProps = {
 function ReviewPhase({ gameData }: ReviewPhaseProps) {
   const currUsername = sessionStorage.getItem("username");
   const [categoryIdx, setCategoryIdx] = useState<number>(0);
-  const [votingAllowed, setVotingAllowed] = useState<boolean>(true);
+  const [alreadyVoted, setAlreadyVoted] = useState<boolean>(false);
+  const [isReviewed, setIsReviewed] = useState<boolean>(false);
 
-  const { sendMessage, votePhaseActive, flaggedAnswer, resetFlaggedAnswer } =
-    gameData;
-  console.log("ReviewPhase Render Check:", { votePhaseActive, flaggedAnswer });
+  const {
+    sendMessage,
+    votePhaseActive,
+    flaggedAnswer,
+    resetFlaggedAnswer,
+    voteResults,
+  } = gameData;
 
   const showVoteCard = votePhaseActive && flaggedAnswer !== null;
 
@@ -63,23 +68,38 @@ function ReviewPhase({ gameData }: ReviewPhaseProps) {
       triggeredByPlayer: currUsername,
       answer: playerAnswer,
     };
-    console.log("flagging answer: " + JSON.stringify(payload));
     sendMessage("BEGIN_VOTE_PHASE", payload);
   };
 
   const submitVoteDecision = (username: string, decision: boolean) => {
-    if (!votingAllowed) {
+    if (alreadyVoted) {
       alert("Already voted");
       return;
     }
-    // TO DO: add function to submit results to backend
-    console.log(username + ` ${decision ? "approved" : "invalidated"}`);
+    if (flaggedAnswer!.targetedPlayer === currUsername) {
+      alert("Cannot vote on your own answer");
+      return;
+    }
+
+    const payload = {
+      category: flaggedAnswer!.category,
+      targetPlayer: flaggedAnswer!.targetedPlayer,
+      voterPlayer: currUsername,
+      vote: decision,
+    };
+    sendMessage("SUBMIT_VOTE", payload);
+    setAlreadyVoted(true);
   };
 
-  // TO DO: fetch results from backend
-  const results = {
-    acceptedVotes: 3,
-    rejectedVotes: 5,
+  const onTimeExpire = () => {
+    const payload = {
+      category: flaggedAnswer!.category,
+      targetPlayer: flaggedAnswer!.targetedPlayer,
+    };
+    sendMessage("END_VOTE_ROUND", payload);
+    setAlreadyVoted(true);
+    setIsReviewed(true);
+    setAlreadyVoted(false);
   };
 
   return (
@@ -92,9 +112,10 @@ function ReviewPhase({ gameData }: ReviewPhaseProps) {
             triggeredByPlayer={flaggedAnswer.triggeredByPlayer}
             answerToReview={flaggedAnswer.answer}
             submitVoteDecision={submitVoteDecision}
-            isReviewed={votingAllowed}
-            setIsReviewed={setVotingAllowed}
-            results={results}
+            isReviewed={isReviewed}
+            approvingVotes={voteResults?.validAnswerVotes}
+            invalidatingVotes={voteResults?.invalidAnswerVotes}
+            onTimeExpire={onTimeExpire}
           />
         )}
 
