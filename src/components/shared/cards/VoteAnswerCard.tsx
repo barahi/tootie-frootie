@@ -1,4 +1,5 @@
 import Timer from "../icons/Timer";
+import { X } from "lucide-react";
 
 interface VoteAnswerCardProps {
   category: string;
@@ -14,6 +15,8 @@ interface VoteAnswerCardProps {
   setIsReviewed?: React.Dispatch<React.SetStateAction<boolean>>;
   approvingVotes?: number;
   invalidatingVotes?: number;
+  closeButtonVisible: boolean;
+  handleButtonClose: () => void;
   onTimeExpire: () => void;
 }
 
@@ -26,15 +29,28 @@ export default function VoteAnswerCard({
   isReviewed,
   approvingVotes,
   invalidatingVotes,
+  closeButtonVisible,
+  handleButtonClose,
   onTimeExpire,
 }: VoteAnswerCardProps) {
   let wasApproved = false;
   if (approvingVotes !== undefined && invalidatingVotes !== undefined) {
     wasApproved = approvingVotes > invalidatingVotes;
   }
+
+  console.log("is reviewed?" + isReviewed);
   return (
     <div className="fixed top-0 left-0 z-50 flex flex-col items-center justify-center w-full h-full bg-black bg-opacity-50">
       <div className="flex flex-col w-full max-w-sm gap-4 p-6 bg-white rounded-xl">
+        {closeButtonVisible && (
+          <button
+            type="button"
+            onClick={handleButtonClose}
+            className="absolute p-1 text-sm transition-colors rounded-lg top-4 right-4 hover:text-gray-90 hover:bg-gray-50"
+          >
+            <X />
+          </button>
+        )}
         <div className="flex flex-row items-center justify-between gap-2">
           <p className="font-medium tracking-wide text-md">Review Answer</p>
           <p className="text-sm font-light">
@@ -109,7 +125,7 @@ export default function VoteAnswerCard({
             </div>
           </div>
         </div>
-        {isReviewed && approvingVotes !== undefined && (
+        {isReviewed && (
           <div className="flex flex-col items-center justify-center">
             <div className="flex flex-row w-full gap-2 pt-4 mt-1 border-t border-gray-90">
               <div

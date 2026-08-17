@@ -54,7 +54,6 @@ function SubmitPhase({ gameData, roundNumber }: SubmitPhaseProps) {
 
   useEffect(() => {
     if (roundScores) {
-      console.log("Scores updated locally! Ready for phase transition.");
       resetRoundState();
     }
   }, [roundScores, resetRoundState]);
@@ -94,7 +93,6 @@ function SubmitPhase({ gameData, roundNumber }: SubmitPhaseProps) {
       console.log("Answers must be complete and start with the round letter");
       return;
     }
-    // TODO: Add option to stop round before it end
   };
 
   if (!gameData) {

@@ -1,6 +1,5 @@
 import SubmitPhase from "./phases/SubmitPhase";
 import ReviewPhase from "./phases/ReviewPhase";
-import VotePhase from "./phases/VotePhase";
 import ScorePhase from "./phases/ScorePhase";
 import { useGameSetup } from "../../../context/GameFlowContext";
 
@@ -21,8 +20,6 @@ function GameRound() {
       );
     case "REVIEW":
       return <ReviewPhase gameData={gameData} />;
-    case "VOTE":
-      return <VotePhase gameData={gameData} />;
     case "SCORE":
       return <ScorePhase gameData={gameData} />;
     default:

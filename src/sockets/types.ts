@@ -67,3 +67,8 @@ export interface VoteRoundResultPayload {
   validAnswerVotes: number;
   invalidAnswerVotes: number;
 }
+
+export interface RoundResultsPayload {
+  roundNumber: number;
+  playerScores: Map<string, number>;
+}

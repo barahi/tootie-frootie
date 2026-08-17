@@ -6,6 +6,7 @@ import {
   StartRoundPayload,
   FlaggedAnswerPayload,
   VoteRoundResultPayload,
+  RoundResultsPayload,
 } from "./types";
 
 const SOCKET_BASE_URL = "ws://localhost:8081/ws/tootiefrootie/";
@@ -31,6 +32,9 @@ export function useGameSocket(
   const [flaggedAnswer, setFlaggedAnswer] =
     useState<FlaggedAnswerPayload | null>(null);
   const [voteResults, setVoteResults] = useState<VoteRoundResultPayload | null>(
+    null,
+  );
+  const [roundResults, setRoundResults] = useState<RoundResultsPayload | null>(
     null,
   );
 
@@ -109,6 +113,16 @@ export function useGameSocket(
             );
             setVoteResults(voteResultsPayload);
             break;
+
+          case "ROUND_RESULTS":
+            const roundResultsPayload =
+              eventData.payload as RoundResultsPayload;
+            console.log(
+              "got final round results payload: " +
+                JSON.stringify(roundResultsPayload),
+            );
+            setRoundResults(roundResultsPayload);
+            break;
         }
       } catch (error) {
         console.error("Error parsing web socket message: ", error);
@@ -168,6 +182,10 @@ export function useGameSocket(
     setVoteResults(null);
   }, []);
 
+  const resetRoundResults = useCallback(() => {
+    setRoundResults(null);
+  }, []);
+
   return {
     connection,
     players,
@@ -179,10 +197,12 @@ export function useGameSocket(
     votePhaseActive,
     flaggedAnswer,
     voteResults,
+    roundResults,
     sendMessage,
     clearError,
     resetRoundState,
     resetFlaggedAnswer,
     resetVoteResults,
+    resetRoundResults,
   };
 }

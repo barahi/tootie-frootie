@@ -19,9 +19,9 @@ export interface GameFlowParams {
 interface GameFlowState {
   gameConfig: GameFlowParams | null;
   setGameConfig: React.Dispatch<React.SetStateAction<GameFlowParams | null>>;
-  currentPhase: "SUBMIT" | "REVIEW" | "VOTE" | "SCORE";
+  currentPhase: "SUBMIT" | "REVIEW" | "SCORE";
   setCurrentPhase: React.Dispatch<
-    React.SetStateAction<"SUBMIT" | "REVIEW" | "VOTE" | "SCORE">
+    React.SetStateAction<"SUBMIT" | "REVIEW" | "SCORE">
   >;
   isInitialized: boolean;
   setIsInitialized: React.Dispatch<React.SetStateAction<boolean>>;
@@ -40,6 +40,8 @@ interface GameFlowState {
   resetFlaggedAnswer: () => void;
   voteResults: any | null;
   resetVoteResults: () => void;
+  roundResults: any | null;
+  resetRoundResults: () => void;
 }
 
 const GameFlowContext = createContext<GameFlowState | undefined>(undefined);
@@ -53,7 +55,7 @@ export function GameSetupProvider({
   const [isInitialized, setIsInitialized] = useState<boolean>(false);
 
   const [currentPhase, setCurrentPhase] = useState<
-    "SUBMIT" | "REVIEW" | "VOTE" | "SCORE"
+    "SUBMIT" | "REVIEW" | "SCORE"
   >("SUBMIT");
 
   const playerId = sessionStorage.getItem("id") || "";
@@ -83,6 +85,12 @@ export function GameSetupProvider({
     }
   }, [socket.roundScores]);
 
+  useEffect(() => {
+    if (socket.roundResults) {
+      setCurrentPhase("SCORE");
+    }
+  }, [socket.roundResults]);
+
   return (
     <GameFlowContext.Provider
       value={{
@@ -107,6 +115,8 @@ export function GameSetupProvider({
         resetFlaggedAnswer: socket.resetFlaggedAnswer,
         voteResults: socket.voteResults,
         resetVoteResults: socket.resetVoteResults,
+        roundResults: socket.roundResults,
+        resetRoundResults: socket.resetRoundResults,
       }}
     >
       {children ? children : <Outlet />}
