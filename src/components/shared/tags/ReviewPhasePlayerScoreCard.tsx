@@ -32,9 +32,13 @@ export default function ReviewPhasePlayerScoreCard({
             {playerName}
           </p>
           <p
-            className={`text-sm font-light tracking-wide ${playerAnswer !== "" ? "text-black" : "text-gray-99 italic"}`}
+            className={`${
+              playerAnswer !== "No Answer"
+                ? "text-black not-italic"
+                : "text-gray-99 italic"
+            } text-sm font-light tracking-wide`}
           >
-            {playerAnswer !== "" ? playerAnswer : "No answer"}
+            {playerAnswer}
           </p>
         </div>
       </div>
@@ -43,8 +47,8 @@ export default function ReviewPhasePlayerScoreCard({
           {playerScore} pts
         </span>
         <button
-          disabled={isMe}
-          className={`${isMe ? "" : "hover:bg-red-50"} flex flex-row items-center justify-center w-full gap-1 p-1 text-xs font-normal text-center border-none rounded-lg bg-gray-50 text-gray-99`}
+          disabled={isMe || playerAnswer === "No Answer"}
+          className={`${isMe || playerAnswer === "No Answer" ? "" : "hover:bg-red-50"} flex flex-row items-center justify-center w-full gap-1 p-1 text-xs font-normal text-center border-none rounded-lg bg-gray-50 text-gray-99`}
           onClick={() => flaggingFunction(playerName, playerAnswer)}
         >
           <Megaphone size="clamp(0.8rem,1.2vw,1rem)" /> Flag

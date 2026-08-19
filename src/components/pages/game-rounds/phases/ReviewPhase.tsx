@@ -55,6 +55,14 @@ function ReviewPhase({ gameData }: ReviewPhaseProps) {
     playerAnswer: string,
     category: string,
   ) => {
+    console.log("got answer: " + playerAnswer.trim());
+    if (
+      playerAnswer.trim() === "No Answer" ||
+      playerAnswer.trim().length === 0
+    ) {
+      console.log("Cannot flag empty answer");
+      return;
+    }
     const payload = {
       category: category,
       targetedPlayer: playerName,
@@ -67,10 +75,6 @@ function ReviewPhase({ gameData }: ReviewPhaseProps) {
   const submitVoteDecision = (username: string, decision: boolean) => {
     if (alreadyVoted) {
       alert("Already voted");
-      return;
-    }
-    if (flaggedAnswer!.targetedPlayer === currUsername) {
-      alert("Cannot vote on your own answer");
       return;
     }
 
@@ -89,6 +93,7 @@ function ReviewPhase({ gameData }: ReviewPhaseProps) {
     const payload = {
       category: flaggedAnswer!.category,
       targetPlayer: flaggedAnswer!.targetedPlayer,
+      answer: flaggedAnswer!.answer,
     };
     sendMessage("END_VOTE_ROUND", payload);
     setIsReviewed(true);
@@ -96,9 +101,9 @@ function ReviewPhase({ gameData }: ReviewPhaseProps) {
 
   const handleCloseButton = () => {
     resetFlaggedAnswer();
-    console.log("reset flagged answer");
     setCloseButtonVisible(false);
     setAlreadyVoted(true);
+    handleEndReview();
   };
 
   const handleEndReview = () => {

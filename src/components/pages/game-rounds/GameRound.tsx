@@ -12,12 +12,7 @@ function GameRound() {
 
   switch (gameData.currentPhase) {
     case "SUBMIT":
-      return (
-        <SubmitPhase
-          gameData={gameData}
-          roundNumber={gameData.startRoundData?.round || 1}
-        />
-      );
+      return <SubmitPhase gameData={gameData} />;
     case "REVIEW":
       return <ReviewPhase gameData={gameData} />;
     case "SCORE":

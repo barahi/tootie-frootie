@@ -1,4 +1,6 @@
+import { useGameSetup } from "../../../../context/GameFlowContext";
 import { useGameSocket } from "../../../../sockets/useGameSocket";
+import PlainColoredButton from "../../../shared/buttons/PlainColoredButton";
 import Layout from "../PhaseLayout";
 
 type ScorePhaseProps = {
@@ -8,7 +10,10 @@ type ScorePhaseProps = {
 function ScorePhase({ gameData }: ScorePhaseProps) {
   const currUsername = sessionStorage.getItem("username");
   const numberOfRounds = gameData.settings?.numberOfRounds || 0;
+
   const { roundResults } = gameData;
+  const { changeRound } = useGameSetup();
+
   return (
     <Layout
       phaseName={`Round ${roundResults?.roundNumber}/${numberOfRounds} - Scores`}
@@ -26,7 +31,7 @@ function ScorePhase({ gameData }: ScorePhaseProps) {
                   >
                     <div className="flex flex-row gap-4">
                       <p
-                        className={`${currUsername !== player ? "bg-blue-90 text-white" : "bg-white text-blue-90"} flex items-center justify-center font-medium border-none rounded-full p-[3px] text-xs`}
+                        className={`${currUsername !== player ? "bg-blue-90 text-white" : "bg-white text-blue-90"} flex items-center justify-center font-medium border-none rounded-[99px] p-[3px] text-xs`}
                       >
                         {player.slice(0, 2).toUpperCase()}
                       </p>
@@ -43,6 +48,11 @@ function ScorePhase({ gameData }: ScorePhaseProps) {
                   </div>
                 ),
               )}
+            <PlainColoredButton
+              buttonTitle="Continue"
+              nextFunction={changeRound}
+              className="w-full p-2 text-sm font-thin mt-[0.5rem]"
+            />
           </div>
         </div>
       </div>

@@ -3,25 +3,25 @@ import PlayerInfoTag from "../../../shared/tags/PlayerInfoTag";
 import { CategoryInput } from "../../../shared/user-input/basic-label-input/CategoryInput";
 import PlainColoredButton from "../../../shared/buttons/PlainColoredButton";
 import Timer from "../../../shared/icons/Timer";
-import { useLocation } from "react-router-dom";
 import PhaseLayout from "../PhaseLayout";
 import LoadingAnimation from "../../../shared/cards/LoadingAnimation";
 import TimesUpCard from "../../../shared/cards/TimesUpCard";
 import { useGameSocket } from "../../../../sockets/useGameSocket";
+import { useGameSetup } from "../../../../context/GameFlowContext";
 
 type SubmitPhaseProps = {
   gameData: ReturnType<typeof useGameSocket>;
-  roundNumber: number;
 };
 
-function SubmitPhase({ gameData, roundNumber }: SubmitPhaseProps) {
-  const location = useLocation();
+function SubmitPhase({ gameData }: SubmitPhaseProps) {
   const playerId = sessionStorage.getItem("id")!;
 
   const [answersAllowed, setAnswersAllowed] = useState<boolean>(true);
   const [categoryAnswers, setCategoryAnswers] = useState<Map<string, string>>(
     new Map(),
   );
+
+  const { startRoundData } = useGameSetup();
 
   const {
     players,
@@ -32,7 +32,10 @@ function SubmitPhase({ gameData, roundNumber }: SubmitPhaseProps) {
     resetRoundState,
   } = gameData;
 
-  const { roundLetter } = location.state;
+  const roundLetter = startRoundData?.letterForRound;
+  const roundNumber = startRoundData?.roundNumber;
+
+  console.log(roundLetter);
   const answersSubmitted = useRef(false);
   useEffect(() => {
     answersSubmitted.current = false;

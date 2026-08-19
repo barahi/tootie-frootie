@@ -1,6 +1,13 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { useGameSocket } from "../sockets/useGameSocket";
 import { Outlet, useParams } from "react-router-dom";
+import { RoomSettings } from "../sockets/types";
 
 export interface GameFlowParams {
   roomId: string;
@@ -25,6 +32,8 @@ interface GameFlowState {
   >;
   isInitialized: boolean;
   setIsInitialized: React.Dispatch<React.SetStateAction<boolean>>;
+  currentRound: number;
+  changeRound: () => void;
   connection: boolean;
   players: any[];
   settings: any | null;
@@ -57,6 +66,7 @@ export function GameSetupProvider({
   const [currentPhase, setCurrentPhase] = useState<
     "SUBMIT" | "REVIEW" | "SCORE"
   >("SUBMIT");
+  const [currentRound, setCurrentRound] = useState<number>(1);
 
   const playerId = sessionStorage.getItem("id") || "";
   const { roomId: urlRoomId } = useParams<{ roomId: string }>();
@@ -78,6 +88,39 @@ export function GameSetupProvider({
     activePassword,
     shouldConnect,
   );
+  useEffect(() => {
+    const s: RoomSettings = socket.settings!;
+    if (socket.settings) {
+      console.log("received room settings");
+      setGameConfig({
+        roomId: s.id || activeRoomId || "",
+        hostPlayerId: s.hostPlayerId || "",
+        numberOfPlayers: s.maxPlayers || 0,
+        numberOfRounds: s.numberOfRounds || 0,
+        numberOfCategories: s.categories?.length || 0,
+        categories: s.categories || [],
+        timeLimit: s.roundDuration || 0,
+        passwordRequirement: Boolean(s.password && s.password.trim() !== ""),
+        password: s.password || activePassword || "",
+        letterExclusion: Boolean(
+          s.excludedLetters && s.excludedLetters.length > 0,
+        ),
+        letters: s.excludedLetters ?? [],
+      });
+    }
+  }, [socket.settings, activeRoomId, activePassword]);
+
+  const totalRounds =
+    socket.settings?.numberOfRounds ?? gameConfig?.numberOfRounds ?? 0;
+
+  useEffect(() => {
+    if (socket.startRoundData) {
+      if (typeof socket.startRoundData.roundNumber === "number") {
+        setCurrentRound(socket.startRoundData.roundNumber);
+      }
+      setCurrentPhase("SUBMIT");
+    }
+  }, [socket, socket.startRoundData]);
 
   useEffect(() => {
     if (socket.roundScores) {
@@ -91,6 +134,19 @@ export function GameSetupProvider({
     }
   }, [socket.roundResults]);
 
+  console.log("total rounds: " + totalRounds);
+
+  const changeRound = useCallback(() => {
+    if (currentRound < totalRounds!) {
+      socket.resetRoundState();
+      console.log("starting new round");
+      socket.sendMessage("START_ROUND");
+    } else {
+      console.log("end game");
+      socket.sendMessage("END_GAME");
+    }
+  }, [currentRound, socket, totalRounds]);
+
   return (
     <GameFlowContext.Provider
       value={{
@@ -100,6 +156,8 @@ export function GameSetupProvider({
         setCurrentPhase,
         isInitialized,
         setIsInitialized,
+        currentRound,
+        changeRound,
         connection: socket.connection,
         players: socket.players,
         settings: socket.settings,

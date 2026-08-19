@@ -79,6 +79,13 @@ export function useGameSocket(
 
           case "START_ROUND":
             const startRoundPayload = eventData.payload as StartRoundPayload;
+            setIsTimeUp(false);
+            setRoundScores(null);
+            setVotePhaseActive(false);
+            setFlaggedAnswer(null);
+            setVoteResults(null);
+            setRoundResults(null);
+
             setStartRoundData(startRoundPayload);
             break;
 
@@ -123,6 +130,7 @@ export function useGameSocket(
             );
             setRoundResults(roundResultsPayload);
             break;
+          case "END_GAME":
         }
       } catch (error) {
         console.error("Error parsing web socket message: ", error);

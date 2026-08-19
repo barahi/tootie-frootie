@@ -19,12 +19,7 @@ function GameLobby() {
   useEffect(() => {
     if (startRoundData) {
       setIsInitialized(true);
-      navigate(`/game/${roomId!}`, {
-        state: {
-          roundLetter: startRoundData.letterForRound,
-          roundNumber: startRoundData.roundNumber,
-        },
-      });
+      navigate(`/game/${roomId}`);
     }
   }, [startRoundData, setIsInitialized, navigate, roomId]);
 
