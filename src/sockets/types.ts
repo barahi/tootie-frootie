@@ -72,3 +72,7 @@ export interface RoundResultsPayload {
   roundNumber: number;
   playerScores: Map<string, number>;
 }
+
+export interface EndGamePayload {
+  gameWinner: string[];
+}

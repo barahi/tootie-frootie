@@ -26,9 +26,9 @@ export interface GameFlowParams {
 interface GameFlowState {
   gameConfig: GameFlowParams | null;
   setGameConfig: React.Dispatch<React.SetStateAction<GameFlowParams | null>>;
-  currentPhase: "SUBMIT" | "REVIEW" | "SCORE";
+  currentPhase: "SUBMIT" | "REVIEW" | "SCORE" | "FINAL";
   setCurrentPhase: React.Dispatch<
-    React.SetStateAction<"SUBMIT" | "REVIEW" | "SCORE">
+    React.SetStateAction<"SUBMIT" | "REVIEW" | "SCORE" | "FINAL">
   >;
   isInitialized: boolean;
   setIsInitialized: React.Dispatch<React.SetStateAction<boolean>>;
@@ -51,6 +51,7 @@ interface GameFlowState {
   resetVoteResults: () => void;
   roundResults: any | null;
   resetRoundResults: () => void;
+  endGameData: any | null;
 }
 
 const GameFlowContext = createContext<GameFlowState | undefined>(undefined);
@@ -64,7 +65,7 @@ export function GameSetupProvider({
   const [isInitialized, setIsInitialized] = useState<boolean>(false);
 
   const [currentPhase, setCurrentPhase] = useState<
-    "SUBMIT" | "REVIEW" | "SCORE"
+    "SUBMIT" | "REVIEW" | "SCORE" | "FINAL"
   >("SUBMIT");
   const [currentRound, setCurrentRound] = useState<number>(1);
 
@@ -134,15 +135,19 @@ export function GameSetupProvider({
     }
   }, [socket.roundResults]);
 
+  useEffect(() => {
+    if (socket.endGameData) {
+      setCurrentPhase("FINAL");
+    }
+  }, [socket.endGameData]);
+
   console.log("total rounds: " + totalRounds);
 
   const changeRound = useCallback(() => {
     if (currentRound < totalRounds!) {
       socket.resetRoundState();
-      console.log("starting new round");
       socket.sendMessage("START_ROUND");
     } else {
-      console.log("end game");
       socket.sendMessage("END_GAME");
     }
   }, [currentRound, socket, totalRounds]);
@@ -175,6 +180,7 @@ export function GameSetupProvider({
         resetVoteResults: socket.resetVoteResults,
         roundResults: socket.roundResults,
         resetRoundResults: socket.resetRoundResults,
+        endGameData: socket.endGameData,
       }}
     >
       {children ? children : <Outlet />}

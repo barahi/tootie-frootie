@@ -12,7 +12,6 @@ export default function Routing() {
     <Router>
       <Routes>
         <Route path="/" element={<MainScreen />} />
-
         <Route element={<GameSetupProvider />}>
           <Route path="/new-game" element={<CreateNewGame />} />
           <Route path="/join-game/*" element={<JoinGame />} />

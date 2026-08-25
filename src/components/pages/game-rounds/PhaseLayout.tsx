@@ -2,7 +2,7 @@ import { ReactNode } from "react";
 import Header from "../../shared/bars/Header";
 
 type PhaseLayoutParams = {
-  phaseName: String;
+  phaseName?: String;
   children?: ReactNode;
 };
 
@@ -13,11 +13,13 @@ function PhaseLayout({ phaseName, children }: PhaseLayoutParams) {
         <Header />
       </header>
       {/* phase title */}
-      <div className="absolute top-[80px] left-1/2 -translate-x-1/2 z-10">
-        <p className="px-4 py-2 text-lg font-thin tracking-wider shadow bg-white/90 rounded-xl">
-          {phaseName}
-        </p>
-      </div>
+      {phaseName && (
+        <div className="absolute top-[80px] left-1/2 -translate-x-1/2 z-10">
+          <p className="px-4 py-2 text-lg font-thin tracking-wider shadow bg-white/90 rounded-xl">
+            {phaseName}
+          </p>
+        </div>
+      )}
 
       {/* main content area to be customized */}
       <main className="pt-[140px] w-full flex justify-center">

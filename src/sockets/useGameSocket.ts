@@ -7,6 +7,7 @@ import {
   FlaggedAnswerPayload,
   VoteRoundResultPayload,
   RoundResultsPayload,
+  EndGamePayload,
 } from "./types";
 
 const SOCKET_BASE_URL = "ws://localhost:8081/ws/tootiefrootie/";
@@ -37,6 +38,7 @@ export function useGameSocket(
   const [roundResults, setRoundResults] = useState<RoundResultsPayload | null>(
     null,
   );
+  const [endGameData, setEndGameData] = useState<EndGamePayload | null>(null);
 
   useEffect(() => {
     if (!shouldConnect || !playerId || !roomId) return;
@@ -95,19 +97,12 @@ export function useGameSocket(
 
           case "ROUND_SCORES":
             const roundScoresPayload = eventData.payload as RoundScoresPayload;
-            console.log(
-              "got round scores payload: " + JSON.stringify(roundScoresPayload),
-            );
             setRoundScores(roundScoresPayload);
             break;
 
           case "FLAGGED_ANSWER":
             const flaggedAnswerPayload =
               eventData.payload as FlaggedAnswerPayload;
-            console.log(
-              "got flagged answer payload: " +
-                JSON.stringify(flaggedAnswerPayload),
-            );
             setFlaggedAnswer(flaggedAnswerPayload);
             setVotePhaseActive(true);
             break;
@@ -115,22 +110,21 @@ export function useGameSocket(
           case "VOTE_RESULTS":
             const voteResultsPayload =
               eventData.payload as VoteRoundResultPayload;
-            console.log(
-              "got vote results payload: " + JSON.stringify(voteResultsPayload),
-            );
+
             setVoteResults(voteResultsPayload);
             break;
 
           case "ROUND_RESULTS":
             const roundResultsPayload =
               eventData.payload as RoundResultsPayload;
-            console.log(
-              "got final round results payload: " +
-                JSON.stringify(roundResultsPayload),
-            );
+
             setRoundResults(roundResultsPayload);
             break;
+
           case "END_GAME":
+            const endGamePayload = eventData.payload as EndGamePayload;
+            setEndGameData(endGamePayload);
+            break;
         }
       } catch (error) {
         console.error("Error parsing web socket message: ", error);
@@ -206,6 +200,7 @@ export function useGameSocket(
     flaggedAnswer,
     voteResults,
     roundResults,
+    endGameData,
     sendMessage,
     clearError,
     resetRoundState,
