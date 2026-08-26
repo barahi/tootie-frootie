@@ -13,8 +13,15 @@ export async function post<REQUEST, RESPONSE>(
 }
 
 export class NetworkError extends Error {
-  constructor(message?: string, options?: ErrorOptions) {
+  public status?: number;
+
+  constructor(message?: string, status?: number, options?: ErrorOptions) {
     super(message, options);
-    console.info("Network error encountered: ", message);
+    this.name = "NetworkError";
+    this.status = status;
+    console.info(
+      `Network error encountered (${status ?? "no status"}):`,
+      message,
+    );
   }
 }

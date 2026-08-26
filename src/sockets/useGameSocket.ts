@@ -58,7 +58,6 @@ export function useGameSocket(
     socket.onmessage = (event) => {
       try {
         const eventData = JSON.parse(event.data);
-        console.log("Web socket event received: ", eventData);
         switch (eventData.type) {
           case "PLAYER_JOINED":
             if (eventData.payload.players) {
@@ -71,10 +70,6 @@ export function useGameSocket(
 
           case "ERROR":
             if (eventData.payload?.message) {
-              console.error(
-                "Server verification failed:",
-                eventData.payload.message,
-              );
               setError(eventData.payload.message);
             }
             break;

@@ -25,9 +25,7 @@ function JoinGame() {
 
     const userId = sessionStorage.getItem("id");
     if (!userId) {
-      setErrorMessage(
-        "Player identity missing. Please go back and choose a nickname.",
-      );
+      setErrorMessage("Please go back and choose a nickname.");
       return;
     }
 

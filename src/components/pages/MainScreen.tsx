@@ -2,6 +2,7 @@ import Logo from "../shared/images/Logo";
 import ErrorMessageCard from "../shared/cards/ErrorMessageCard";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { NetworkError } from "../../rest/requests";
 import { addNewPlayer, PlayerPayload } from "../../rest/player";
 
 function MainScreen() {
@@ -19,13 +20,21 @@ function MainScreen() {
       return;
     }
     const userData: PlayerPayload = { username: username };
-    const request = await addNewPlayer(userData);
-    if (request.id != null) {
-      sessionStorage.setItem("id", request.id);
-      sessionStorage.setItem("username", request.username);
-      navigate(path);
+    try {
+      const request = await addNewPlayer(userData);
+      if (request.id != null) {
+        sessionStorage.setItem("id", request.id);
+        sessionStorage.setItem("username", request.username);
+        navigate(path);
+      }
+      setErrorMessage("");
+    } catch (error) {
+      if (error instanceof NetworkError && error.status === 409) {
+        setErrorMessage("Username taken, try another one");
+      } else {
+        setErrorMessage("Something went wrong. Please try again.");
+      }
     }
-    setErrorMessage("");
   };
 
   return (
