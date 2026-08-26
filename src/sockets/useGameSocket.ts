@@ -81,8 +81,6 @@ export function useGameSocket(
             setVotePhaseActive(false);
             setFlaggedAnswer(null);
             setVoteResults(null);
-            setRoundResults(null);
-
             setStartRoundData(startRoundPayload);
             break;
 
@@ -180,7 +178,7 @@ export function useGameSocket(
   }, []);
 
   const resetRoundResults = useCallback(() => {
-    setRoundResults(null);
+    // setRoundResults(null);
   }, []);
 
   return {

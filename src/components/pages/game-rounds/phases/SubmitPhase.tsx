@@ -8,6 +8,7 @@ import LoadingAnimation from "../../../shared/cards/LoadingAnimation";
 import TimesUpCard from "../../../shared/cards/TimesUpCard";
 import { useGameSocket } from "../../../../sockets/useGameSocket";
 import { useGameSetup } from "../../../../context/GameFlowContext";
+import { Leaderboard } from "../../../shared/tags/Leaderboard";
 
 type SubmitPhaseProps = {
   gameData: ReturnType<typeof useGameSocket>;
@@ -15,6 +16,7 @@ type SubmitPhaseProps = {
 
 function SubmitPhase({ gameData }: SubmitPhaseProps) {
   const playerId = sessionStorage.getItem("id")!;
+  const username = sessionStorage.getItem("username")!;
 
   const [answersAllowed, setAnswersAllowed] = useState<boolean>(true);
   const [categoryAnswers, setCategoryAnswers] = useState<Map<string, string>>(
@@ -29,13 +31,20 @@ function SubmitPhase({ gameData }: SubmitPhaseProps) {
     isTimeUp,
     sendMessage,
     roundScores,
+    roundResults,
     resetRoundState,
   } = gameData;
 
   const roundLetter = startRoundData?.letterForRound;
   const roundNumber = startRoundData?.roundNumber;
 
-  console.log(roundLetter);
+  let scores: [string, number][] = [];
+  if (roundNumber > 1 && roundResults !== null) {
+    scores = Object.entries(roundResults?.playerScores!).sort(
+      ([, scoreA], [, scoreB]) => scoreB - scoreA,
+    );
+  }
+
   const answersSubmitted = useRef(false);
   useEffect(() => {
     answersSubmitted.current = false;
@@ -121,14 +130,22 @@ function SubmitPhase({ gameData }: SubmitPhaseProps) {
                 Leaderboard
               </p>
               <div className="flex flex-col w-full gap-2">
-                {players.map((p: any, idx: number) => (
-                  <PlayerInfoTag
-                    key={p.id}
-                    number={idx + 1}
-                    name={p.username}
-                    className="border-none`"
-                  />
-                ))}
+                {roundNumber > 1 ? (
+                  <>
+                    <Leaderboard username={username} scores={scores!} />
+                  </>
+                ) : (
+                  <>
+                    {players.map((p: any, idx: number) => (
+                      <PlayerInfoTag
+                        key={p.id}
+                        number={idx + 1}
+                        name={p.username}
+                        className="border-none`"
+                      />
+                    ))}
+                  </>
+                )}
               </div>
             </div>
             {/* User answers Part */}

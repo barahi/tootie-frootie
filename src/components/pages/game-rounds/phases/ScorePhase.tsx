@@ -12,6 +12,7 @@ function ScorePhase({ gameData }: ScorePhaseProps) {
   const numberOfRounds = gameData.settings?.numberOfRounds || 0;
 
   const { roundResults } = gameData;
+  console.log("in here, round results + " + JSON.stringify(roundResults));
   const { changeRound } = useGameSetup();
 
   return (
