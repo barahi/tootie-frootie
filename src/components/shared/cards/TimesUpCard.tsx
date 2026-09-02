@@ -1,13 +1,20 @@
-import { Clock } from "lucide-react";
+import { Clock, Ban } from "lucide-react";
 import React, { useState, useEffect } from "react";
 
 interface TimesUpCardProps {
+  message: string;
+  triggeredBy?: string;
   showCard: boolean;
   children: React.ReactNode;
 }
 
-export default function TimesUpCard({ showCard, children }: TimesUpCardProps) {
-  const [displayView, setDisplayView] = useState<boolean>(false);
+export default function TimesUpCard({
+  message,
+  triggeredBy,
+  showCard,
+  children,
+}: TimesUpCardProps) {
+  const [, setDisplayView] = useState<boolean>(false);
 
   useEffect(() => {
     if (showCard) {
@@ -21,17 +28,33 @@ export default function TimesUpCard({ showCard, children }: TimesUpCardProps) {
     }
   }, [showCard]);
 
-  if (displayView) {
-    return (
-      <div className="relative w-full h-screen bg-opacity-50 bg-black/50">
-        <div className="absolute inset-0 z-50 flex items-center justify-center">
-          <div className="flex flex-col items-center justify-center gap-2 px-8 py-4 rounded-lg bg-red-50">
-            <Clock />
-            <p className="font-normal text-md text-gray-99">Time's up!</p>
+  const isEarlyStop = message.toLowerCase().includes("early stop");
+
+  return (
+    <div className="relative w-full min-h-screen">
+      {children}
+
+      {showCard && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <div className="flex flex-col items-center justify-center gap-2 px-8 py-6 text-center bg-white shadow-2xl rounded-xl animate-fade-in">
+            {isEarlyStop ? (
+              <Ban className="w-10 h-10" />
+            ) : (
+              <Clock className="w-10 h-10" />
+            )}
+            <h2 className="text-xl font-thin text-gray-99">{message}</h2>
+            {isEarlyStop && triggeredBy && (
+              <div className="flex flex-row items-center justify-center gap-1">
+                <p className="text-sm font-light text-gray-99">Triggered by</p>
+                <p className="text-sm font-light text-gray-99">
+                  {" "}
+                  {triggeredBy}
+                </p>
+              </div>
+            )}
           </div>
         </div>
-      </div>
-    );
-  }
-  return <>{children}</>;
+      )}
+    </div>
+  );
 }

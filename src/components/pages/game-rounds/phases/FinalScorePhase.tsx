@@ -20,6 +20,9 @@ function FinalScorePhase({ gameData }: FinalScorePhaseProps) {
   );
 
   const returnHome = () => {
+    sessionStorage.removeItem("id");
+    sessionStorage.removeItem("username");
+    sessionStorage.removeItem("roomId");
     navigate("/");
   };
 

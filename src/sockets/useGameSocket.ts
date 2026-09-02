@@ -8,6 +8,7 @@ import {
   VoteRoundResultPayload,
   RoundResultsPayload,
   EndGamePayload,
+  EarlyStopPayload,
 } from "./types";
 
 const SOCKET_BASE_URL = "ws://localhost:8081/ws/tootiefrootie/";
@@ -21,10 +22,15 @@ export function useGameSocket(
   const ws = useRef<WebSocket | null>(null);
   const [connection, setConnection] = useState<boolean>(false);
   const [players, setPlayers] = useState<Player[]>([]);
+  const [cumulativeScores, setCumulativeScores] = useState<Map<
+    string,
+    number
+  > | null>(new Map());
   const [settings, setSettings] = useState<RoomSettings | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [startRoundData, setStartRoundData] =
     useState<StartRoundPayload | null>(null);
+  const [earlyStop, setEarlyStop] = useState<EarlyStopPayload | null>(null);
   const [isTimeUp, setIsTimeUp] = useState<boolean>(false);
   const [roundScores, setRoundScores] = useState<RoundScoresPayload | null>(
     null,
@@ -74,14 +80,22 @@ export function useGameSocket(
             }
             break;
 
-          case "START_ROUND":
+          case "START_ROUND": {
             const startRoundPayload = eventData.payload as StartRoundPayload;
+
+            setEarlyStop(null);
             setIsTimeUp(false);
             setRoundScores(null);
+            setRoundResults(null);
             setVotePhaseActive(false);
             setFlaggedAnswer(null);
             setVoteResults(null);
             setStartRoundData(startRoundPayload);
+            break;
+          }
+          case "EARLY_STOP":
+            const earlyStopPayload = eventData.payload as EarlyStopPayload;
+            setEarlyStop(earlyStopPayload);
             break;
 
           case "TIME_UP":
@@ -107,12 +121,24 @@ export function useGameSocket(
             setVoteResults(voteResultsPayload);
             break;
 
-          case "ROUND_RESULTS":
+          case "ROUND_RESULTS": {
+            console.log(
+              "Received round results from backend:",
+              eventData.payload,
+            );
             const roundResultsPayload =
               eventData.payload as RoundResultsPayload;
 
+            setEarlyStop(null);
+            setIsTimeUp(false);
+            setRoundScores(null);
             setRoundResults(roundResultsPayload);
+
+            if (roundResultsPayload.playerScores) {
+              setCumulativeScores(roundResultsPayload.playerScores);
+            }
             break;
+          }
 
           case "END_GAME":
             const endGamePayload = eventData.payload as EndGamePayload;
@@ -177,16 +203,14 @@ export function useGameSocket(
     setVoteResults(null);
   }, []);
 
-  const resetRoundResults = useCallback(() => {
-    // setRoundResults(null);
-  }, []);
-
   return {
     connection,
     players,
+    cumulativeScores,
     settings,
     error,
     startRoundData,
+    earlyStop,
     isTimeUp,
     roundScores,
     votePhaseActive,
@@ -199,6 +223,5 @@ export function useGameSocket(
     resetRoundState,
     resetFlaggedAnswer,
     resetVoteResults,
-    resetRoundResults,
   };
 }

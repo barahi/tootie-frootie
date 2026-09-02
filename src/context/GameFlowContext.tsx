@@ -4,6 +4,7 @@ import {
   useContext,
   useEffect,
   useState,
+  useMemo,
 } from "react";
 import { useGameSocket } from "../sockets/useGameSocket";
 import { Outlet, useParams } from "react-router-dom";
@@ -27,20 +28,19 @@ interface GameFlowState {
   gameConfig: GameFlowParams | null;
   setGameConfig: React.Dispatch<React.SetStateAction<GameFlowParams | null>>;
   currentPhase: "SUBMIT" | "REVIEW" | "SCORE" | "FINAL";
-  setCurrentPhase: React.Dispatch<
-    React.SetStateAction<"SUBMIT" | "REVIEW" | "SCORE" | "FINAL">
-  >;
   isInitialized: boolean;
   setIsInitialized: React.Dispatch<React.SetStateAction<boolean>>;
   currentRound: number;
   changeRound: () => void;
   connection: boolean;
   players: any[];
+  cumulativeScores: Map<string, number> | null;
   settings: any | null;
   sendMessage: (type: string, payload?: any) => void;
   error: string | null;
   clearError: () => void;
   startRoundData: any | null;
+  earlyStop: any | null;
   isTimeUp: boolean;
   roundScores: any | null;
   resetRoundState: () => void;
@@ -50,7 +50,6 @@ interface GameFlowState {
   voteResults: any | null;
   resetVoteResults: () => void;
   roundResults: any | null;
-  resetRoundResults: () => void;
   endGameData: any | null;
 }
 
@@ -63,11 +62,7 @@ export function GameSetupProvider({
 }) {
   const [gameConfig, setGameConfig] = useState<GameFlowParams | null>(null);
   const [isInitialized, setIsInitialized] = useState<boolean>(false);
-
-  const [currentPhase, setCurrentPhase] = useState<
-    "SUBMIT" | "REVIEW" | "SCORE" | "FINAL"
-  >("SUBMIT");
-  const [currentRound, setCurrentRound] = useState<number>(1);
+  const [currentRound] = useState<number>(1);
 
   const playerId = sessionStorage.getItem("id") || "";
   const { roomId: urlRoomId } = useParams<{ roomId: string }>();
@@ -92,7 +87,6 @@ export function GameSetupProvider({
   useEffect(() => {
     const s: RoomSettings = socket.settings!;
     if (socket.settings) {
-      console.log("received room settings");
       setGameConfig({
         roomId: s.id || activeRoomId || "",
         hostPlayerId: s.hostPlayerId || "",
@@ -114,38 +108,15 @@ export function GameSetupProvider({
   const totalRounds =
     socket.settings?.numberOfRounds ?? gameConfig?.numberOfRounds ?? 0;
 
-  useEffect(() => {
-    if (socket.startRoundData) {
-      if (typeof socket.startRoundData.roundNumber === "number") {
-        setCurrentRound(socket.startRoundData.roundNumber);
-      }
-      setCurrentPhase("SUBMIT");
-    }
-  }, [socket, socket.startRoundData]);
-
-  useEffect(() => {
-    if (socket.roundScores) {
-      setCurrentPhase("REVIEW");
-    }
-  }, [socket.roundScores]);
-
-  useEffect(() => {
-    if (socket.roundResults) {
-      setCurrentPhase("SCORE");
-    }
-  }, [socket.roundResults]);
-
-  useEffect(() => {
-    if (socket.endGameData) {
-      setCurrentPhase("FINAL");
-    }
-  }, [socket.endGameData]);
-
-  console.log("total rounds: " + totalRounds);
+  const currentPhase: "SUBMIT" | "REVIEW" | "SCORE" | "FINAL" = useMemo(() => {
+    if (socket.endGameData) return "FINAL";
+    if (socket.roundResults) return "SCORE";
+    if (socket.roundScores) return "REVIEW";
+    return "SUBMIT";
+  }, [socket.endGameData, socket.roundResults, socket.roundScores]);
 
   const changeRound = useCallback(() => {
-    if (currentRound < totalRounds!) {
-      socket.resetRoundState();
+    if (currentRound < totalRounds) {
       socket.sendMessage("START_ROUND");
     } else {
       socket.sendMessage("END_GAME");
@@ -158,18 +129,19 @@ export function GameSetupProvider({
         gameConfig,
         setGameConfig,
         currentPhase,
-        setCurrentPhase,
         isInitialized,
         setIsInitialized,
         currentRound,
         changeRound,
         connection: socket.connection,
         players: socket.players,
+        cumulativeScores: socket.cumulativeScores,
         settings: socket.settings,
         sendMessage: socket.sendMessage,
         error: socket.error,
         clearError: socket.clearError,
         startRoundData: socket.startRoundData,
+        earlyStop: socket.earlyStop,
         isTimeUp: socket.isTimeUp,
         roundScores: socket.roundScores,
         resetRoundState: socket.resetRoundState,
@@ -179,7 +151,6 @@ export function GameSetupProvider({
         voteResults: socket.voteResults,
         resetVoteResults: socket.resetVoteResults,
         roundResults: socket.roundResults,
-        resetRoundResults: socket.resetRoundResults,
         endGameData: socket.endGameData,
       }}
     >

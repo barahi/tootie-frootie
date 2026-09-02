@@ -28,7 +28,6 @@ function ReviewPhase({ gameData }: ReviewPhaseProps) {
   } = gameData;
 
   const showVoteCard = votePhaseActive && flaggedAnswer !== null;
-  console.log("show vote card? " + showVoteCard);
 
   const roundScores = gameData.roundScores;
   const roundScoreMap = roundScores?.roundScoreMap || {};
@@ -103,7 +102,6 @@ function ReviewPhase({ gameData }: ReviewPhaseProps) {
     resetFlaggedAnswer();
     setCloseButtonVisible(false);
     setAlreadyVoted(true);
-    handleEndReview();
   };
 
   const handleEndReview = () => {
@@ -134,7 +132,10 @@ function ReviewPhase({ gameData }: ReviewPhaseProps) {
           <div className="flex flex-col gap-8">
             {formattedRoundScoreData.map(
               (categoryData: CategoryReviewRoundCompilation) => (
-                <div className="flex flex-col max-w-3xl gap-2 p-6 bg-white border-none rounded-xl">
+                <div
+                  key={categoryData.category}
+                  className="flex flex-col max-w-3xl gap-2 p-6 bg-white border-none rounded-xl"
+                >
                   <div className="flex flex-row gap-1">
                     <p className="mb-2 text-sm font-thin tracking-wide">
                       Category:

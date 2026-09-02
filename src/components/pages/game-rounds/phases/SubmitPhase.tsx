@@ -5,10 +5,9 @@ import PlainColoredButton from "../../../shared/buttons/PlainColoredButton";
 import Timer from "../../../shared/icons/Timer";
 import PhaseLayout from "../PhaseLayout";
 import LoadingAnimation from "../../../shared/cards/LoadingAnimation";
-import TimesUpCard from "../../../shared/cards/TimesUpCard";
 import { useGameSocket } from "../../../../sockets/useGameSocket";
-import { useGameSetup } from "../../../../context/GameFlowContext";
 import { Leaderboard } from "../../../shared/tags/Leaderboard";
+import ErrorMessageCard from "../../../shared/cards/ErrorMessageCard";
 
 type SubmitPhaseProps = {
   gameData: ReturnType<typeof useGameSocket>;
@@ -22,37 +21,39 @@ function SubmitPhase({ gameData }: SubmitPhaseProps) {
   const [categoryAnswers, setCategoryAnswers] = useState<Map<string, string>>(
     new Map(),
   );
-
-  const { startRoundData } = useGameSetup();
+  const [errorMessage, setErrorMessage] = useState<string>("");
 
   const {
+    startRoundData,
     players,
     settings,
     isTimeUp,
+    earlyStop,
     sendMessage,
-    roundScores,
-    roundResults,
-    resetRoundState,
+    cumulativeScores,
   } = gameData;
 
-  const roundLetter = startRoundData?.letterForRound;
-  const roundNumber = startRoundData?.roundNumber;
+  const roundLetter = startRoundData?.letterForRound || "";
+  const roundNumber = startRoundData?.roundNumber || 1;
 
   let scores: [string, number][] = [];
-  if (roundNumber > 1 && roundResults !== null) {
-    scores = Object.entries(roundResults?.playerScores!).sort(
+  if (roundNumber > 1 && cumulativeScores) {
+    scores = Object.entries(cumulativeScores).sort(
       ([, scoreA], [, scoreB]) => scoreB - scoreA,
     );
   }
 
-  const answersSubmitted = useRef(false);
+  const answersSubmittedForRound = useRef<number | null>(null);
+
   useEffect(() => {
-    answersSubmitted.current = false;
+    setAnswersAllowed(true);
   }, [roundNumber]);
 
   useEffect(() => {
-    if (!isTimeUp || answersSubmitted.current) return;
-    answersSubmitted.current = true;
+    const isStopped = earlyStop != null || isTimeUp;
+    if (!isStopped || answersSubmittedForRound.current === roundNumber) return;
+
+    answersSubmittedForRound.current = roundNumber;
     setAnswersAllowed(false);
 
     const roundAnswers = Object.fromEntries(categoryAnswers);
@@ -62,24 +63,24 @@ function SubmitPhase({ gameData }: SubmitPhaseProps) {
       roundAnswers: roundAnswers,
     };
     sendMessage("SUBMIT_ANSWERS", payload);
-  }, [isTimeUp, sendMessage, categoryAnswers, playerId, roundNumber]);
+  }, [
+    earlyStop,
+    isTimeUp,
+    categoryAnswers,
+    playerId,
+    roundNumber,
+    sendMessage,
+  ]);
 
   useEffect(() => {
-    if (roundScores) {
-      resetRoundState();
-    }
-  }, [roundScores, resetRoundState]);
-
-  useEffect(() => {
-    if (settings?.categories && categoryAnswers.size === 0) {
+    if (settings?.categories) {
       const initialMap = new Map<string, string>();
       settings.categories.forEach((cat: string) => {
         initialMap.set(cat, "");
       });
       setCategoryAnswers(initialMap);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [settings]);
+  }, [settings?.categories, roundNumber]);
 
   const totalRounds = settings?.numberOfRounds;
   const categories = settings?.categories || [];
@@ -95,16 +96,17 @@ function SubmitPhase({ gameData }: SubmitPhaseProps) {
   };
 
   const endRound = () => {
-    let check = true;
     for (const [, val] of categoryAnswers) {
-      if (!val.startsWith(roundLetter) || val.length < 1) {
-        check = false;
+      const formatted = (val || "").trim().toUpperCase();
+      const targetLetter = (roundLetter || "").toUpperCase();
+      if (!formatted.startsWith(targetLetter) || formatted.length < 1) {
+        setErrorMessage(
+          "Answers must start with the chosen letter and be longer than 1 character",
+        );
+        return;
       }
     }
-    if (!check) {
-      console.log("Answers must be complete and start with the round letter");
-      return;
-    }
+    sendMessage("TRIGGER_STOP", username);
   };
 
   if (!gameData) {
@@ -120,87 +122,80 @@ function SubmitPhase({ gameData }: SubmitPhaseProps) {
       serverLoading={!settings || settings === undefined}
       minimumTime={700}
     >
-      <TimesUpCard showCard={isTimeUp}>
-        <PhaseLayout phaseName={`Round ${roundNumber}/${totalRounds} `}>
-          <div className="flex flex-row w-full items-start justify-center gap-[2%]">
-            {/* LeaderBoard Part */}
-            <div className="flex flex-col w-[20%] bg-white border-none rounded-xl p-4">
-              <p className="mb-2 text-sm font-thin tracking-wide">
-                {" "}
-                Leaderboard
-              </p>
-              <div className="flex flex-col w-full gap-2">
-                {roundNumber > 1 ? (
-                  <>
-                    <Leaderboard username={username} scores={scores!} />
-                  </>
-                ) : (
-                  <>
-                    {players.map((p: any, idx: number) => (
-                      <PlayerInfoTag
-                        key={p.id}
-                        number={idx + 1}
-                        name={p.username}
-                        className="border-none`"
-                      />
-                    ))}
-                  </>
-                )}
-              </div>
-            </div>
-            {/* User answers Part */}
-            <div className="flex flex-col w-[50%] bg-white border-none rounded-xl px-4 py-4">
-              <div className="flex justify-between w-full">
-                <div className="flex flex-col">
-                  <p className="font-light tracking-wide font-small text-md text-gray-99">
-                    Enter your answers
-                  </p>
-                  <div className="flex flex-row items-center justify-start gap-2">
-                    <p className="font-thin tracking-wide text-gray-900 text-md">
-                      All answers must start with the letter
-                    </p>
-                    <span className="px-[10px] py-[5px] rounded-xl font-md text-md bg-gray-50">
-                      {roundLetter.toUpperCase()}
-                    </span>
-                  </div>
-                </div>
-                {!isTimeUp ? (
-                  <Timer
-                    totalSeconds={timeLimit!}
-                    onTimeExpire={() => setAnswersAllowed(false)}
+      <PhaseLayout phaseName={`Round ${roundNumber}/${totalRounds}`}>
+        <div className="flex flex-row w-full items-start justify-center gap-[2%]">
+          {/* Leaderboard Part */}
+          <div className="flex flex-col w-[20%] bg-white border-none rounded-xl p-4">
+            <p className="mb-2 text-sm font-thin tracking-wide">Leaderboard</p>
+            <div className="flex flex-col w-full gap-2">
+              {roundNumber > 1 ? (
+                <Leaderboard username={username} scores={scores} />
+              ) : (
+                players.map((p: any, idx: number) => (
+                  <PlayerInfoTag
+                    key={p.id || idx}
+                    number={idx + 1}
+                    name={p.username}
+                    className="border-none"
                   />
-                ) : (
-                  <div className="font-bold tracking-wide ">00:00</div>
-                )}
-
-                {/* timer componenet */}
-              </div>
-              <div className="flex flex-col w-full gap-4 mt-2 mb-2">
-                {Array.from({ length: categories.length }).map((_, idx) => (
-                  <CategoryInput
-                    key={idx}
-                    name={categories[idx]}
-                    num={idx}
-                    input={categoryAnswers.get(categories[idx]) || ""}
-                    canAddInput={answersAllowed}
-                    setInput={(value) => {
-                      addCategoryAnswer(categories[idx], value);
-                    }}
-                  />
-                ))}
-              </div>
-              <div className="flex justify-center mt-4">
-                <PlainColoredButton
-                  buttonTitle="Finish"
-                  nextFunction={() => {
-                    endRound();
-                  }}
-                />
-              </div>
+                ))
+              )}
             </div>
           </div>
-        </PhaseLayout>
-      </TimesUpCard>
+
+          {/* Category Inputs Part */}
+          <div className="flex flex-col w-[50%] bg-white border-none rounded-xl px-4 py-4">
+            <div className="flex justify-between w-full">
+              <div className="flex flex-col">
+                <p className="font-light tracking-wide text-gray-900 text-md">
+                  Enter your answers
+                </p>
+                <div className="flex flex-row items-center justify-start gap-2">
+                  <p className="font-thin tracking-wide text-gray-900 text-md">
+                    All answers must start with the letter
+                  </p>
+                  <span className="px-[10px] py-[5px] rounded-xl font-medium text-md bg-gray-50">
+                    {roundLetter.toUpperCase()}
+                  </span>
+                </div>
+              </div>
+              {!isTimeUp && !earlyStop ? (
+                <Timer
+                  key={roundNumber}
+                  totalSeconds={timeLimit || 30}
+                  onTimeExpire={() => setAnswersAllowed(false)}
+                />
+              ) : (
+                <div className="font-bold tracking-wide">00:00</div>
+              )}
+            </div>
+
+            <div className="flex flex-col w-full gap-4 mt-2 mb-2">
+              {categories.map((cat: string, idx: number) => (
+                <CategoryInput
+                  key={idx}
+                  name={cat}
+                  num={idx}
+                  input={categoryAnswers.get(cat) || ""}
+                  canAddInput={answersAllowed}
+                  setInput={(value) => {
+                    addCategoryAnswer(cat, value);
+                  }}
+                />
+              ))}
+            </div>
+            <div className="flex items-center justify-center text-align">
+              {errorMessage && <ErrorMessageCard message={errorMessage} />}
+            </div>
+            <div className="flex justify-center mt-4">
+              <PlainColoredButton
+                buttonTitle="Finish"
+                nextFunction={endRound}
+              />
+            </div>
+          </div>
+        </div>
+      </PhaseLayout>
     </LoadingAnimation>
   );
 }

@@ -31,6 +31,10 @@ export interface StartRoundPayload {
   roundNumber: number;
 }
 
+export interface EarlyStopPayload {
+  triggeredBy: string;
+}
+
 export interface WebSocketEvent<EventPayload = any> {
   type: SocketEventTypes;
   payload: EventPayload;
